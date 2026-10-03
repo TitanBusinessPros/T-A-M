@@ -18,6 +18,24 @@
         canvas {
             display: block;
         }
+        #startButton {
+            position: absolute;
+            top: calc(50% + 160px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 16px;
+            border: 0;
+            background: transparent;
+            color: #ffff00;
+            font: bold 36px 'Courier New', monospace;
+            text-shadow: 0 0 20px #ffff00;
+            cursor: pointer;
+            z-index: 2;
+            touch-action: manipulation;
+        }
+        @media (max-width: 600px) {
+            #startButton { font-size: 24px; }
+        }
         #levelTransition {
             position: absolute;
             top: 50%;
@@ -143,6 +161,7 @@
 </head>
 <body>
     <canvas id="game"></canvas>
+    <button id="startButton" type="button">TAP TO START</button>
     <div id="gameTitle" class="hidden">SPACE GAME</div>
     <div id="levelTransition"></div>
     <button id="pauseButton">PAUSE</button>
@@ -151,8 +170,8 @@
         <div style="font-size: 24px; margin-top: 20px;">Press P or click anywhere to resume</div>
         <button class="menu-button">RESUME GAME</button>
     </div>
-    <audio id="bgMusic" loop preload="auto">
-        <source src="https://github.com/TitanBusinessPros/TBP-Images/raw/main/Galactic%20Drift.mp3" type="audio/mpeg">
+    <audio id="bgMusic" loop preload="none">
+        <source src="https://raw.githubusercontent.com/TitanBusinessPros/TBP-Images/main/Galactic%20Drift.mp3" type="audio/mpeg">
     </audio>
     <script>
         const businessTitle = (new URLSearchParams(window.location.search).get('title') || 'SPACE GAME').trim().slice(0, 48);
@@ -199,8 +218,6 @@
         let enemiesSpawned = 0;
         let waveClear = false;
         let levelTransitioning = false;
-        let audioContext = null;
-        let audioInitialized = false;
         
         // Shooting cooldown variables
         let lastShotTime = 0;
@@ -854,7 +871,7 @@
             ctx.shadowBlur = 20;
             const startSize = isMobile ? 24 : 36;
             ctx.font = `bold ${startSize}px Courier New`;
-            ctx.fillText('TAP TO START', centerX, centerY + 160);
+
             
             ctx.shadowBlur = 0;
             ctx.textBaseline = 'alphabetic';
@@ -1331,40 +1348,21 @@
         }
 
         function initAudio() {
-            if (!audioInitialized) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                audioInitialized = true;
-            }
-            
             const music = document.getElementById('bgMusic');
             music.volume = 0.5;
-            
-            // Resume audio context (required for mobile)
-            if (audioContext && audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            
-            // Play with multiple fallbacks
             const playPromise = music.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    console.log('✓ Music playing successfully');
-                }).catch(err => {
-                    console.log('✗ Music failed:', err.message);
-                    // Try loading and playing again
-                    music.load();
-                    setTimeout(() => {
-                        music.play().then(() => {
-                            console.log('✓ Music playing after reload');
-                        }).catch(e => {
-                            console.log('✗ Music failed after reload:', e.message);
-                        });
-                    }, 1000);
-                });
-            }
+            if (playPromise) playPromise.catch(err => console.info('Music could not start:', err.message));
         }
 
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            gameRunning = true;
+            startLevel(1);
+            document.getElementById('gameTitle').classList.remove('hidden');
+            document.getElementById('startButton').hidden = true;
+            requestAnimationFrame(gameLoop);
+        }
         function handleRestartClick(x, y) {
             const centerX = canvas.width / 2;
             let buttonY;
@@ -1396,21 +1394,19 @@
         
         canvas.addEventListener('click', (e) => {
             if (!gameStarted) {
-                gameStarted = true;
-                gameRunning = true;
-                startLevel(1);
-                
-                document.getElementById('gameTitle').classList.remove('hidden');
-                
+                startGame();
                 initAudio();
-                
-                requestAnimationFrame(gameLoop);
             } else if (gameOver || gameWon) {
                 const rect = canvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 handleRestartClick(x, y);
             }
+        });
+
+        document.getElementById('startButton').addEventListener('click', () => {
+            startGame();
+            initAudio();
         });
         
         // Separate touch handler for starting game on mobile
@@ -1419,16 +1415,8 @@
             if (!gameStarted && !gameStartTouch) {
                 gameStartTouch = true;
                 e.preventDefault();
-                
-                gameStarted = true;
-                gameRunning = true;
-                startLevel(1);
-                
-                document.getElementById('gameTitle').classList.remove('hidden');
-                
+                startGame();
                 initAudio();
-                
-                requestAnimationFrame(gameLoop);
             } else if (gameOver || gameWon) {
                 e.preventDefault();
                 const rect = canvas.getBoundingClientRect();
