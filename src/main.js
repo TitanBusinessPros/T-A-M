@@ -15,9 +15,14 @@ const localNote = document.querySelector('#localNote');
 const logoInput = document.querySelector('#businessLogo');
 const logoHelp = document.querySelector('#logoHelp');
 const createButton = document.querySelector('#createButton');
+const noLogoWarning = document.querySelector('#noLogoWarning');
+const cancelNoLogo = document.querySelector('#cancelNoLogo');
+const continueNoLogo = document.querySelector('#continueNoLogo');
 
 let toastTimer;
 let previewLogoUrl;
+let gameHasLogo = false;
+let confirmedDownload = false;
 
 function updateLogoPreview() {
   const slot = gamePreview.contentDocument?.querySelector('#sponsorLogoSlot');
@@ -108,6 +113,7 @@ form.addEventListener('submit', async (event) => {
     downloadQr.href = qrPng;
     const fileName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'space-game';
     downloadQr.download = `${fileName}-qr.png`;
+    gameHasLogo = Boolean(file);
     shareCard.hidden = false;
     localNote.textContent = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'Local test only: your phone must be on the same Wi-Fi as this computer.'
@@ -122,6 +128,22 @@ form.addEventListener('submit', async (event) => {
   } finally {
     createButton.firstChild.textContent = 'MAKE MY GAME ';
     createButton.disabled = false;
+  }
+});
+
+downloadQr.addEventListener('click', (event) => {
+  if (gameHasLogo || confirmedDownload) return;
+  event.preventDefault();
+  noLogoWarning.showModal();
+});
+cancelNoLogo.addEventListener('click', () => noLogoWarning.close());
+continueNoLogo.addEventListener('click', () => {
+  noLogoWarning.close();
+  confirmedDownload = true;
+  try {
+    downloadQr.click();
+  } finally {
+    confirmedDownload = false;
   }
 });
 

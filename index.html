@@ -78,6 +78,15 @@
 
       <footer class="footer"><span>APP MAKER 3000</span><span>SPACE GAME · LOCAL PROTOTYPE</span></footer>
     </div>
+    <dialog id="noLogoWarning" aria-labelledby="noLogoWarningTitle">
+      <h2 id="noLogoWarningTitle">No logo added</h2>
+      <p>Uploaded image must be under 100 KB.</p>
+      <p>By pressing Continue, you will download a QR code for a game without your logo or image. Only your business name will appear in the game.</p>
+      <div class="warning-actions">
+        <button id="cancelNoLogo" type="button">CANCEL</button>
+        <button id="continueNoLogo" type="button">CONTINUE</button>
+      </div>
+    </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script type="module" src="./src/main.js"></script>
