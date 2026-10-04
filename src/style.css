@@ -19,16 +19,15 @@ button { cursor: pointer; }
 
 .page-shell { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 .topbar { height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
-.brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 800; letter-spacing: .11em; }
-.brand b { color: #73805c; }
-.brand-mark { display: grid; place-items: center; height: 30px; width: 30px; border-radius: 9px; background: var(--green); font-size: 15px; letter-spacing: 0; }
-.prototype-tag, .eyebrow, .step-label, .footer, .input-meta { font-family: 'DM Mono', monospace; }
-.prototype-tag { display: inline-flex; align-items: center; gap: 8px; color: #606a61; font-size: 10px; letter-spacing: .07em; }
-.prototype-tag span { width: 7px; height: 7px; background: #e2a843; border-radius: 50%; }
+.brand { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 800; letter-spacing: .11em; }
+.eyebrow, .step-label, .footer, .input-meta { font-family: 'DM Mono', monospace; }
+.offer-banner { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 5px 12px; margin-top: 20px; padding: 12px 18px; border-radius: 10px; background: var(--green); text-align: center; font-size: 13px; }
+.offer-banner strong { font-weight: 800; }
 
-.intro { padding: 66px 0 45px; text-align: center; }
+.intro { padding: 34px 0 45px; text-align: center; }
+.titan-logo { display: block; width: 180px; height: 180px; margin: 0 auto 12px; object-fit: contain; }
 .eyebrow { margin: 0 0 18px; color: #758252; font-size: 11px; letter-spacing: .14em; }
-h1 { margin: 0; font-size: clamp(48px, 7vw, 78px); line-height: .98; letter-spacing: -.075em; font-weight: 700; }
+h1 { margin: 0; font-size: clamp(38px, 5.5vw, 66px); line-height: 1.05; letter-spacing: -.065em; font-weight: 700; }
 h1 em { color: #758252; font-style: normal; }
 .intro-copy { max-width: 470px; margin: 22px auto 0; color: var(--muted); font-size: 16px; line-height: 1.65; }
 
@@ -91,7 +90,8 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 @media (max-width: 760px) {
   .page-shell { padding: 0 20px; }
   .topbar { height: 68px; }
-  .intro { padding: 49px 0 32px; }
+  .intro { padding: 30px 0 32px; }
+  .titan-logo { width: 145px; height: 145px; }
   .intro-copy { max-width: 390px; font-size: 14px; }
   .builder { grid-template-columns: 1fr; gap: 34px; padding: 25px; }
   .game-preview { height: 360px; }
@@ -101,9 +101,7 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 }
 
 @media (max-width: 420px) {
-  .prototype-tag { font-size: 8px; }
-  .brand { font-size: 10px; }
-  .brand-mark { width: 27px; height: 27px; }
+  .brand { font-size: 12px; }
   .builder { padding: 20px; }
   h2 { font-size: 23px; }
   .link-row { flex-direction: column; }
