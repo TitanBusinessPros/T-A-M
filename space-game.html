@@ -189,7 +189,7 @@
     <button id="pauseButton">PAUSE</button>
     <div id="pauseScreen">
         <div>GAME PAUSED</div>
-        <div style="font-size: 24px; margin-top: 20px;">Press P or click anywhere to resume</div>
+        <div style="font-size: 24px; margin-top: 20px;">Tap RESUME GAME to continue</div>
         <button class="menu-button">RESUME GAME</button>
     </div>
     <audio id="bgMusic" loop preload="none" playsinline>
@@ -272,11 +272,6 @@
 
         window.addEventListener('keydown', e => {
             keys[e.key.toLowerCase()] = true;
-            
-            // Pause with P key
-            if (e.key.toLowerCase() === 'p' && gameStarted && gameRunning) {
-                togglePause();
-            }
         });
         
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
@@ -900,9 +895,14 @@
             ctx.shadowBlur = 10;
             const instructSize = isMobile ? 14 : 24;
             ctx.font = `${instructSize}px Courier New`;
-            ctx.fillText('WASD - Move Ship', centerX, centerY + 70);
-            ctx.fillText('TOUCH/MOUSE - Aim & Fire', centerX, centerY + 100);
-            ctx.fillText('P - Pause Game', centerX, centerY + 130);
+            const usesTouch = window.matchMedia?.('(pointer: coarse)').matches || (window.navigator?.maxTouchPoints || 0) > 0;
+            if (usesTouch) {
+                ctx.fillText('TOUCH & DRAG - Aim & Fire', centerX, centerY + 90);
+            } else {
+                ctx.fillText('WASD - Move Ship', centerX, centerY + 70);
+                ctx.fillText('MOUSE - Aim & Fire', centerX, centerY + 100);
+                ctx.fillText('CLICK PAUSE TO PAUSE', centerX, centerY + 130);
+            }
             
             ctx.fillStyle = '#ffff00';
             ctx.shadowColor = '#ffff00';
