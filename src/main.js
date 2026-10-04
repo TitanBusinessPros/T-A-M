@@ -1,4 +1,4 @@
-import { trackQrCreated, uploadLogo, validateLogo } from './firebase.js';
+import { MAX_LOGO_BYTES, trackQrCreated, uploadLogo, validateLogo } from './firebase.js';
 
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');
@@ -18,6 +18,30 @@ const createButton = document.querySelector('#createButton');
 
 let toastTimer;
 let previewLogoUrl;
+let readyLogoFile;
+let logoSelection = 0;
+
+async function fitLogoUnderLimit(file) {
+  const image = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  try {
+    for (const edge of [512, 384, 256, 192, 128, 96]) {
+      const scale = Math.min(1, edge / Math.max(image.width, image.height));
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.85));
+      if (blob && blob.size <= MAX_LOGO_BYTES) {
+        const extension = blob.type === 'image/webp' ? 'webp' : 'png';
+        return new File([blob], `logo.${extension}`, { type: blob.type });
+      }
+    }
+    throw new Error('This logo could not be made small enough. Try another image.');
+  } finally {
+    image.close();
+  }
+}
 
 function updateLogoPreview() {
   const slot = gamePreview.contentDocument?.querySelector('#sponsorLogoSlot');
@@ -47,24 +71,52 @@ gamePreview.addEventListener('load', () => {
   updateLogoPreview();
 });
 
-logoInput.addEventListener('change', () => {
+logoInput.addEventListener('change', async () => {
+  const selection = ++logoSelection;
   shareCard.hidden = true;
   logoHelp.classList.remove('error');
   logoHelp.textContent = 'PNG, JPG, or WebP. Maximum 100 KB.';
   if (previewLogoUrl) URL.revokeObjectURL(previewLogoUrl);
   previewLogoUrl = null;
+  readyLogoFile = null;
+  createButton.disabled = false;
   const file = logoInput.files[0];
-  if (file) {
-    try {
-      validateLogo(file);
-      previewLogoUrl = URL.createObjectURL(file);
-    } catch (error) {
+  updateLogoPreview();
+  if (!file) return;
+  try {
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      throw new Error('Choose a PNG, JPG, or WebP logo.');
+    }
+    if (!file.size) throw new Error('This logo file is empty.');
+    previewLogoUrl = URL.createObjectURL(file);
+    updateLogoPreview();
+    if (file.size > MAX_LOGO_BYTES) {
+      createButton.disabled = true;
+      logoHelp.textContent = 'Preparing logo for upload...';
+      const fittedFile = await fitLogoUnderLimit(file);
+      if (selection !== logoSelection) return;
+      readyLogoFile = fittedFile;
+      URL.revokeObjectURL(previewLogoUrl);
+      previewLogoUrl = URL.createObjectURL(readyLogoFile);
+      updateLogoPreview();
+    } else {
+      readyLogoFile = file;
+    }
+    validateLogo(readyLogoFile);
+    logoHelp.textContent = 'Logo ready. Upload stays under 100 KB.';
+  } catch (error) {
+    if (selection === logoSelection) {
       logoInput.value = '';
+      if (previewLogoUrl) URL.revokeObjectURL(previewLogoUrl);
+      previewLogoUrl = null;
+      readyLogoFile = null;
+      updateLogoPreview();
       logoHelp.textContent = error.message;
       logoHelp.classList.add('error');
     }
+  } finally {
+    if (selection === logoSelection) createButton.disabled = false;
   }
-  updateLogoPreview();
 });
 
 window.addEventListener('pagehide', () => {
@@ -82,7 +134,8 @@ form.addEventListener('submit', async (event) => {
   try {
     shareCard.hidden = true;
     createButton.disabled = true;
-    const file = logoInput.files[0];
+    if (logoInput.files[0] && !readyLogoFile) throw new Error('Wait for the logo to finish preparing.');
+    const file = readyLogoFile;
     if (file) {
       validateLogo(file);
       createButton.firstChild.textContent = 'UPLOADING LOGO ';
