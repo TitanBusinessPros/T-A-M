@@ -3,7 +3,7 @@ import { trackQrCreated, uploadLogo, validateLogo } from './firebase.js';
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');
 const count = document.querySelector('#characterCount');
-const previewTitle = document.querySelector('#livePreviewTitle');
+const gamePreview = document.querySelector('#gamePreview');
 const shareCard = document.querySelector('#shareCard');
 const gameLink = document.querySelector('#gameLink');
 const openGameLink = document.querySelector('#openGame');
@@ -21,9 +21,14 @@ let toastTimer;
 nameInput.addEventListener('input', () => {
   shareCard.hidden = true;
   const value = nameInput.value.trim();
-  previewTitle.textContent = value || 'YOUR BUSINESS NAME';
+  const title = gamePreview.contentDocument?.querySelector('#gameTitle');
+  if (title) {
+    title.textContent = value || 'Your business name goes here';
+    title.classList.toggle('placeholder', !value);
+  }
   count.textContent = `${nameInput.value.length} / 48`;
 });
+gamePreview.addEventListener('load', () => nameInput.dispatchEvent(new Event('input')));
 
 logoInput.addEventListener('change', () => {
   shareCard.hidden = true;

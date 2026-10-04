@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Game</title>
+    <script>if (new URLSearchParams(location.search).has('preview')) document.documentElement.classList.add('preview');</script>
     <style>
         body {
             margin: 0;
@@ -50,14 +51,23 @@
             width: min(240px, 62vw);
             min-height: clamp(64px, 14vh, 120px);
             padding: 12px;
-            border: 2px dashed #00ffff;
-            border-radius: 10px;
             color: #fff;
             font-size: clamp(16px, 4vw, 25px);
             font-weight: bold;
             overflow-wrap: anywhere;
         }
         .sponsor-logo img { display: block; max-width: 100%; max-height: clamp(64px, 14vh, 120px); object-fit: contain; }
+        .preview #startScreen { gap: 5px; padding: 8px; }
+        .preview .sponsor-logo { min-height: 50px; padding: 4px; font-size: 15px; }
+        .preview .sponsor-logo img { max-height: 70px; }
+        .preview .sponsor-label { font-size: 12px; }
+        .preview .start-copy h1 { font-size: clamp(18px, 5vw, 25px); }
+        .preview .start-copy p { margin-top: 5px; }
+        .preview .start-copy .game-meta, .preview .start-copy .controls { font-size: 12px; }
+        .preview #startButton { padding: 6px 12px; font-size: 18px; }
+        .preview #pauseButton, .preview #soundButton { bottom: 6px; padding: 5px 7px; font-size: 11px; }
+        .preview #pauseButton { right: 6px; }
+        .preview #soundButton { left: 6px; }
         .start-copy { width: min(620px, 100%); }
         .start-copy h1 {
             margin: 0;
@@ -141,6 +151,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        #gameTitle.placeholder { font-size: clamp(11px, 3.8vw, 20px); }
         @media (max-width: 600px) {
             #gameTitle {
                 font-size: 28px;
@@ -236,7 +247,7 @@
     <div id="startScreen">
         <div class="sponsor-area">
             <div class="sponsor-label">Sponsored By</div>
-            <div id="sponsorLogoSlot" class="sponsor-logo">YOUR BUSINESS</div>
+            <div id="sponsorLogoSlot" class="sponsor-logo">Your logo goes here</div>
         </div>
         <div class="start-copy">
             <h1>Protect Earth from alien invasion!</h1>
@@ -246,7 +257,7 @@
         </div>
         <button id="startButton" type="button">TAP TO START</button>
     </div>
-    <div id="gameTitle" class="hidden">SPACE GAME</div>
+    <div id="gameTitle" class="hidden">Your business name goes here</div>
     <div id="levelTransition"></div>
     <button id="pauseButton" hidden>PAUSE</button>
     <div id="pauseScreen">
@@ -259,9 +270,9 @@
     </audio>
     <button id="soundButton" type="button" hidden>SOUND LOADING</button>
     <script>
-        const businessTitle = (new URLSearchParams(window.location.search).get('title') || 'SPACE GAME').trim().slice(0, 48);
-        document.getElementById('gameTitle').textContent = businessTitle || 'SPACE GAME';
-        document.getElementById('sponsorLogoSlot').textContent = businessTitle || 'SPACE GAME';
+        const businessTitle = (new URLSearchParams(window.location.search).get('title') || '').trim().slice(0, 48);
+        document.getElementById('gameTitle').textContent = businessTitle || 'Your business name goes here';
+        document.getElementById('gameTitle').classList.toggle('placeholder', !businessTitle);
         document.title = businessTitle || 'Space Game';
 
         const canvas = document.getElementById('game');
@@ -948,20 +959,20 @@
             ctx.fillStyle = '#ff0000';
             ctx.shadowBlur = 30;
             ctx.shadowColor = '#ff0000';
-            ctx.font = `bold ${isMobile ? 48 : 72}px Courier New`;
+            ctx.font = `bold ${Math.min(isMobile ? 48 : 72, canvas.width / 6)}px Courier New`;
             ctx.fillText('GAME OVER', centerX, centerY - 80);
             
             ctx.fillStyle = '#ffffff';
             ctx.shadowBlur = 10;
-            ctx.font = `${isMobile ? 24 : 36}px Courier New`;
+            ctx.font = `${Math.min(isMobile ? 24 : 36, canvas.width / 13)}px Courier New`;
             ctx.fillText('Final Score: ' + score, centerX, centerY + 10);
             ctx.fillText('Level Reached: ' + currentLevel, centerX, centerY + 60);
             
             // Draw restart button
-            const buttonWidth = 300;
+            const buttonWidth = Math.min(300, canvas.width - 20);
             const buttonHeight = 60;
             const buttonX = centerX - buttonWidth / 2;
-            const buttonY = centerY + 120;
+            const buttonY = Math.min(centerY + 120, canvas.height - 70);
             
             ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
             ctx.strokeStyle = '#00ff00';
@@ -991,25 +1002,25 @@
             ctx.fillStyle = '#00ff00';
             ctx.shadowBlur = 40;
             ctx.shadowColor = '#00ff00';
-            ctx.font = `bold ${isMobile ? 48 : 72}px Courier New`;
+            ctx.font = `bold ${Math.min(isMobile ? 48 : 72, canvas.width / 6)}px Courier New`;
             ctx.fillText('VICTORY!', centerX, centerY - 100);
             
             ctx.fillStyle = '#ffff00';
             ctx.shadowBlur = 20;
-            ctx.font = `${isMobile ? 32 : 48}px Courier New`;
+            ctx.font = `${Math.min(isMobile ? 32 : 48, canvas.width / 9)}px Courier New`;
             ctx.fillText('Earth is Saved!', centerX, centerY - 30);
             
             ctx.fillStyle = '#ffffff';
             ctx.shadowBlur = 10;
-            ctx.font = `${isMobile ? 24 : 36}px Courier New`;
+            ctx.font = `${Math.min(isMobile ? 24 : 36, canvas.width / 13)}px Courier New`;
             ctx.fillText('Final Score: ' + score, centerX, centerY + 30);
             ctx.fillText('All 15 Levels Complete!', centerX, centerY + 80); // Updated to 15 levels
             
             // Draw restart button
-            const buttonWidth = 300;
+            const buttonWidth = Math.min(300, canvas.width - 20);
             const buttonHeight = 60;
             const buttonX = centerX - buttonWidth / 2;
-            const buttonY = centerY + 150;
+            const buttonY = Math.min(centerY + 150, canvas.height - 70);
             
             ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
             ctx.strokeStyle = '#00ff00';
@@ -1405,15 +1416,15 @@
             
             if (gameOver) {
                 // Game Over screen button position
-                buttonY = canvas.height / 2 + 120;
+                buttonY = Math.min(canvas.height / 2 + 120, canvas.height - 70);
             } else if (gameWon) {
                 // Victory screen button position
-                buttonY = canvas.height / 2 + 150;
+                buttonY = Math.min(canvas.height / 2 + 150, canvas.height - 70);
             } else {
                 return false;
             }
             
-            const buttonWidth = 300;
+            const buttonWidth = Math.min(300, canvas.width - 20);
             const buttonHeight = 60;
             const buttonX = centerX - buttonWidth / 2;
             
