@@ -41,20 +41,30 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 72px;
+            box-sizing: border-box;
+            width: min(420px, 90vw);
+            padding: 24px;
+            border: 2px solid #00ff00;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.92);
+            font-size: clamp(25px, 6vw, 42px);
             color: #00ff00;
-            text-shadow: 0 0 30px #00ff00;
+            text-align: center;
+            text-shadow: 0 0 18px #00ff00;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.2s;
             font-weight: bold;
             z-index: 1000;
-            white-space: nowrap;
         }
-        @media (max-width: 600px) {
-            #levelTransition {
-                font-size: 36px;
-            }
+        #levelTransition .transition-stats {
+            display: grid;
+            gap: 8px;
+            margin-top: 18px;
+            color: #fff;
+            font-size: clamp(16px, 4vw, 21px);
+            font-weight: normal;
+            text-shadow: none;
         }
         #gameTitle {
             position: absolute;
@@ -106,7 +116,7 @@
         }
         #pauseButton {
             position: absolute;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
             background: rgba(0, 255, 0, 0.3);
             border: 2px solid #00ff00;
@@ -150,7 +160,7 @@
         }
         @media (max-width: 600px) {
             #pauseButton {
-                top: 10px;
+                bottom: 10px;
                 right: 10px;
                 padding: 8px 16px;
                 font-size: 16px;
@@ -231,6 +241,9 @@
         let enemiesSpawned = 0;
         let waveClear = false;
         let levelTransitioning = false;
+        let transitionRemainingMs = 0;
+        let previousFrameTime = 0;
+        let gameLoopQueued = false;
         
         // Shooting cooldown variables
         let lastShotTime = 0;
@@ -307,11 +320,16 @@
                 pauseScreen.style.display = 'flex';
             } else {
                 pauseScreen.style.display = 'none';
-                // Restart the game loop if we're unpausing
-                if (gameRunning && !levelTransitioning) {
-                    requestAnimationFrame(gameLoop);
-                }
             }
+        }
+
+        function scheduleGameLoop() {
+            if (gameLoopQueued || !gameRunning) return;
+            gameLoopQueued = true;
+            requestAnimationFrame(time => {
+                gameLoopQueued = false;
+                gameLoop(time);
+            });
         }
 
         // Touch controls for mobile - SHOOTING ONLY
@@ -724,16 +742,31 @@
             }
         }
 
-        function showLevelTransition(text) {
+        function showLevelTransition(text, bonusLife = false) {
             const el = document.getElementById('levelTransition');
-            el.textContent = text;
+            const heading = document.createElement('div');
+            heading.textContent = text;
+            const stats = document.createElement('div');
+            stats.className = 'transition-stats';
+            const lines = [
+                'SCORE: ' + score,
+                'LIVES: ' + lives,
+                'GUNS: ' + gunLevel,
+                'ENEMIES THIS LEVEL: ' + waveEnemies
+            ];
+            if (bonusLife) lines.unshift('BONUS LIFE +1');
+            if (fireMode) lines.push('FIRE MODE ACTIVE');
+            if (iceMode) lines.push('ICE MODE ACTIVE');
+            lines.forEach(text => {
+                const line = document.createElement('div');
+                line.textContent = text;
+                stats.appendChild(line);
+            });
+            el.replaceChildren(heading, stats);
             el.style.opacity = '1';
-            setTimeout(() => {
-                el.style.opacity = '0';
-            }, 2000);
         }
 
-        function startLevel(level) {
+        function startLevel(level, bonusLife = false) {
             currentLevel = level;
             
             // Much more balanced enemy count scaling
@@ -746,7 +779,8 @@
             
             enemiesSpawned = 0;
             waveClear = false;
-            levelTransitioning = false;
+            levelTransitioning = true;
+            transitionRemainingMs = 3000;
             enemies = [];
             bullets = [];
             particles = [];
@@ -754,13 +788,13 @@
             
             // Special boss level messages
             if (level === 8) {
-                showLevelTransition('BOSS LEVEL 8');
+                showLevelTransition('BOSS LEVEL 8', bonusLife);
             } else if (level === 12) {
-                showLevelTransition('FINAL BOSS LEVEL');
+                showLevelTransition('FINAL BOSS LEVEL', bonusLife);
             } else if (level === 15) {
-                showLevelTransition('THE FINAL CHALLENGE');
+                showLevelTransition('THE FINAL CHALLENGE', bonusLife);
             } else {
-                showLevelTransition('LEVEL ' + level);
+                showLevelTransition('LEVEL ' + level + '/' + maxLevel, bonusLife);
             }
         }
 
@@ -772,20 +806,9 @@
                 return;
             }
             
-            levelTransitioning = true;
-            
-            // More frequent bonus lives for better balance
-            if (currentLevel % 3 === 0) {
-                lives++;
-                showLevelTransition('BONUS LIFE! +1');
-                setTimeout(() => {
-                    startLevel(currentLevel + 1);
-                }, 2500);
-            } else {
-                setTimeout(() => {
-                    startLevel(currentLevel + 1);
-                }, 2000);
-            }
+            const bonusLife = currentLevel % 3 === 0;
+            if (bonusLife) lives++;
+            startLevel(currentLevel + 1, bonusLife);
         }
 
         function loseLife() {
@@ -839,6 +862,8 @@
             enemiesSpawned = 0;
             waveClear = false;
             levelTransitioning = false;
+            transitionRemainingMs = 0;
+            previousFrameTime = 0;
             
             document.getElementById('pauseScreen').style.display = 'none';
             
@@ -981,7 +1006,7 @@
             ctx.textBaseline = 'alphabetic';
         }
 
-        function gameLoop() {
+        function gameLoop(time = performance.now()) {
             if (!gameStarted) {
                 showStartScreen();
                 return;
@@ -992,8 +1017,11 @@
                 return;
             }
 
+            const elapsed = previousFrameTime ? Math.max(0, time - previousFrameTime) : 0;
+            previousFrameTime = time;
+
             if (gamePaused) {
-                requestAnimationFrame(gameLoop);
+                scheduleGameLoop();
                 return;
             }
 
@@ -1020,7 +1048,12 @@
             });
 
             if (levelTransitioning) {
-                requestAnimationFrame(gameLoop);
+                transitionRemainingMs -= elapsed;
+                if (transitionRemainingMs <= 0) {
+                    levelTransitioning = false;
+                    document.getElementById('levelTransition').style.opacity = '0';
+                }
+                scheduleGameLoop();
                 return;
             }
 
@@ -1315,49 +1348,9 @@
                 drawEnemyShape(e);
             });
 
-            // Draw UI
-            const isMobile = canvas.width < 600;
-            ctx.fillStyle = '#00ff00';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#00ff00';
-            ctx.font = `bold ${isMobile ? 18 : 24}px Courier New`;
-            ctx.textAlign = 'left';
-            
-            // Score
-            ctx.fillText('SCORE: ' + score, 20, 40);
-            
-            // Level - FIXED for mobile to ensure "Level" and number stay together
-            const levelText = 'LEVEL: ' + currentLevel + '/' + maxLevel;
-            ctx.fillText(levelText, 20, 70);
-            
-            ctx.fillStyle = '#ff0000';
-            ctx.shadowColor = '#ff0000';
-            ctx.fillText('LIVES: ' + '♥'.repeat(lives), 20, isMobile ? 95 : 100);
-            
-            ctx.fillStyle = '#ffff00';
-            ctx.shadowColor = '#ffff00';
-            ctx.fillText('ENEMIES: ' + enemies.length + '/' + waveEnemies, 20, isMobile ? 120 : 130);
-            
-            ctx.fillStyle = '#00aaff';
-            ctx.shadowColor = '#00aaff';
-            ctx.fillText('GUNS: ' + gunLevel, 20, isMobile ? 145 : 160);
-            
-            if (fireMode) {
-                ctx.fillStyle = '#ff4400';
-                ctx.shadowColor = '#ff4400';
-                ctx.fillText('FIRE MODE: ' + Math.ceil(fireModeTimer / 60) + 's', 20, isMobile ? 170 : 190);
-            }
-            
-            if (iceMode) {
-                ctx.fillStyle = '#00ffff';
-                ctx.shadowColor = '#00ffff';
-                const yPos = fireMode ? (isMobile ? 195 : 220) : (isMobile ? 170 : 190);
-                ctx.fillText('ICE MODE: ' + Math.ceil(iceModeTimer / 60) + 's', 20, yPos);
-            }
-            
             ctx.shadowBlur = 0;
 
-            requestAnimationFrame(gameLoop);
+            scheduleGameLoop();
         }
 
         function initAudio() {
@@ -1384,7 +1377,7 @@
             startLevel(1);
             document.getElementById('gameTitle').classList.remove('hidden');
             document.getElementById('startButton').hidden = true;
-            requestAnimationFrame(gameLoop);
+            scheduleGameLoop();
         }
         function handleRestartClick(x, y) {
             const centerX = canvas.width / 2;
@@ -1409,7 +1402,7 @@
                 y >= buttonY && y <= buttonY + buttonHeight) {
                 resetGame();
                 initAudio();
-                requestAnimationFrame(gameLoop);
+                scheduleGameLoop();
                 return true;
             }
             return false;
