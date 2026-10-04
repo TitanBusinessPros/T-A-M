@@ -118,6 +118,18 @@
             z-index: 1500;
             border-radius: 5px;
         }
+        #soundButton {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            z-index: 1500;
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, .75);
+            color: #00ffff;
+            font: 14px 'Courier New', monospace;
+        }
         #pauseButton:hover {
             background: rgba(0, 255, 0, 0.5);
         }
@@ -170,9 +182,10 @@
         <div style="font-size: 24px; margin-top: 20px;">Press P or click anywhere to resume</div>
         <button class="menu-button">RESUME GAME</button>
     </div>
-    <audio id="bgMusic" loop preload="none">
-        <source src="https://raw.githubusercontent.com/TitanBusinessPros/TBP-Images/main/Galactic%20Drift.mp3" type="audio/mpeg">
+    <audio id="bgMusic" loop preload="none" playsinline>
+        <source src="./assets/galactic-drift.mp3" type="audio/mpeg">
     </audio>
+    <button id="soundButton" type="button" hidden>SOUND LOADING</button>
     <script>
         const businessTitle = (new URLSearchParams(window.location.search).get('title') || 'SPACE GAME').trim().slice(0, 48);
         document.getElementById('gameTitle').textContent = businessTitle || 'SPACE GAME';
@@ -1349,10 +1362,20 @@
 
         function initAudio() {
             const music = document.getElementById('bgMusic');
+            const soundButton = document.getElementById('soundButton');
             music.volume = 0.5;
             const playPromise = music.play();
-            if (playPromise) playPromise.catch(err => console.info('Music could not start:', err.message));
+            soundButton.hidden = false;
+            soundButton.textContent = 'SOUND LOADING';
+            if (playPromise) {
+                playPromise.then(() => { soundButton.hidden = true; }).catch(err => {
+                    soundButton.textContent = 'TAP FOR SOUND';
+                    console.info('Music needs another tap:', err.message);
+                });
+            }
         }
+
+        document.getElementById('soundButton').addEventListener('click', initAudio);
 
         function startGame() {
             if (gameStarted) return;

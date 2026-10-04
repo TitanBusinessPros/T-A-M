@@ -39,14 +39,19 @@ form.addEventListener('submit', async (event) => {
       colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.M,
     });
+    const qrCanvas = qrTarget.querySelector('canvas');
+    const qrImage = qrTarget.querySelector('img');
+    const qrPng = qrCanvas?.toDataURL('image/png') || qrImage?.src;
+    if (!qrPng?.startsWith('data:image/')) throw new Error('QR image is not ready to download.');
     gameLink.value = url.toString();
     openGameLink.href = url.toString();
-    const qrImage = qrTarget.querySelector('img');
-    downloadQr.href = qrImage.src;
+    downloadQr.href = qrPng;
+    const fileName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'space-game';
+    downloadQr.download = `${fileName}-qr.png`;
     shareCard.hidden = false;
     localNote.textContent = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'For phone testing, open this page using your computer’s Wi-Fi address first, then make a fresh QR.'
-      : 'This test link works on devices that can reach this computer while the local server is running.';
+      ? 'Local test only: your phone must be on the same Wi-Fi as this computer.'
+      : 'Scan this code to open your game with your business name.';
     trackQrCreated();
     shareCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (error) {
