@@ -21,38 +21,12 @@ const continueNoLogo = document.querySelector('#continueNoLogo');
 const authButton = document.querySelector('#authButton');
 const buyCredits = document.querySelector('#buyCredits');
 const creditBalance = document.querySelector('#creditBalance');
-const installButton = document.querySelector('#installButton');
 
 let toastTimer;
 let previewLogoUrl;
 let gameHasLogo = false;
 let confirmedDownload = false;
 let pendingRequestId;
-let installPrompt;
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
-}
-
-window.addEventListener('beforeinstallprompt', (event) => {
-  event.preventDefault();
-  installPrompt = event;
-});
-window.addEventListener('appinstalled', () => {
-  installPrompt = undefined;
-  installButton.hidden = true;
-});
-if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) installButton.hidden = true;
-installButton.addEventListener('click', async () => {
-  if (installPrompt) {
-    await installPrompt.prompt();
-    installPrompt = undefined;
-    return;
-  }
-  const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  showToast(isAppleMobile ? 'Tap Share, then Add to Home Screen.' : 'Open your browser menu and choose Install app or Add to Home screen.');
-});
-
 async function refreshCredits() {
   if (!currentUser()) {
     creditBalance.textContent = 'Sign in to see your credits.';
