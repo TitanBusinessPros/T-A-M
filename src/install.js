@@ -11,14 +11,19 @@
     toast.textContent = message;
     toast.classList.add('visible');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('visible'), 5000);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 8000);
   }
 
   if (installButton) {
     installButton.hidden = isInstalled();
     installButton.addEventListener('click', async () => {
       if (!installPrompt) {
-        showStatus('Installation is not available on this page yet.');
+        const agent = navigator.userAgent;
+        showStatus(/iPhone|iPad|iPod/.test(agent)
+          ? 'Tap Share, then Add to Home Screen.'
+          : /Android/.test(agent)
+            ? 'In Chrome, tap the menu, then Install app or Add to Home Screen.'
+            : 'This browser did not offer an install prompt. Check its install icon or your installed apps.');
         return;
       }
       const prompt = installPrompt;
