@@ -1,4 +1,4 @@
-import { trackQrCreated } from './firebase.js';
+import { trackQrCreated, uploadLogo, validateLogo } from './firebase.js';
 
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');
@@ -12,13 +12,32 @@ const downloadQr = document.querySelector('#downloadQr');
 const copyButton = document.querySelector('#copyLink');
 const toast = document.querySelector('#toast');
 const localNote = document.querySelector('#localNote');
+const logoInput = document.querySelector('#businessLogo');
+const logoHelp = document.querySelector('#logoHelp');
+const createButton = document.querySelector('#createButton');
 
 let toastTimer;
 
 nameInput.addEventListener('input', () => {
+  shareCard.hidden = true;
   const value = nameInput.value.trim();
   previewTitle.textContent = value || 'YOUR BUSINESS NAME';
   count.textContent = `${nameInput.value.length} / 48`;
+});
+
+logoInput.addEventListener('change', () => {
+  shareCard.hidden = true;
+  logoHelp.classList.remove('error');
+  logoHelp.textContent = 'PNG, JPG, or WebP. Maximum 100 KB.';
+  const file = logoInput.files[0];
+  if (!file) return;
+  try {
+    validateLogo(file);
+  } catch (error) {
+    logoInput.value = '';
+    logoHelp.textContent = error.message;
+    logoHelp.classList.add('error');
+  }
 });
 
 form.addEventListener('submit', async (event) => {
@@ -30,6 +49,15 @@ form.addEventListener('submit', async (event) => {
   url.searchParams.set('title', name);
 
   try {
+    shareCard.hidden = true;
+    createButton.disabled = true;
+    const file = logoInput.files[0];
+    if (file) {
+      validateLogo(file);
+      createButton.firstChild.textContent = 'UPLOADING LOGO ';
+      url.searchParams.set('logo', await uploadLogo(file));
+    }
+    createButton.firstChild.textContent = 'MAKING QR CODE ';
     qrTarget.replaceChildren();
     new QRCode(qrTarget, {
       text: url.toString(),
@@ -55,8 +83,13 @@ form.addEventListener('submit', async (event) => {
     trackQrCreated();
     shareCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (error) {
-    showToast('Could not make the QR code. Please try again.');
+    logoHelp.textContent = error.message || 'Could not make the game. Please try again.';
+    logoHelp.classList.add('error');
+    showToast(logoHelp.textContent);
     console.error(error);
+  } finally {
+    createButton.firstChild.textContent = 'MAKE MY GAME ';
+    createButton.disabled = false;
   }
 });
 

@@ -1,4 +1,6 @@
 {
+  "auth": { "providers": { "anonymous": true } },
+  "storage": { "rules": "storage.rules" },
   "hosting": {
     "public": ".",
     "ignore": [

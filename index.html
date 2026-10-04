@@ -22,23 +22,26 @@
         <section class="intro">
           <p class="eyebrow">YOUR BUSINESS. YOUR GAME.</p>
           <h1>Put your name<br />in the <em>game.</em></h1>
-          <p class="intro-copy">Make a space game with your business name at the top, then create a QR code people can scan to play.</p>
+          <p class="intro-copy">Add your business name and logo to a space game, then create a QR code people can scan to play.</p>
         </section>
 
         <section class="builder" aria-labelledby="builder-heading">
           <div class="builder-form">
             <div class="step-label"><span>01</span> MAKE IT YOURS</div>
             <h2 id="builder-heading">Add your business name</h2>
-            <p class="form-copy">Your name appears across the top of the game.</p>
+            <p class="form-copy">Your name appears across the top, and your logo appears on the start screen.</p>
 
             <form id="brandForm">
               <label for="businessName">Business name</label>
               <input id="businessName" name="businessName" type="text" maxlength="48" placeholder="Example: Acme Auto Repair" autocomplete="organization" required />
               <div class="input-meta"><span>Keep it short so it fits on a phone.</span><span id="characterCount">0 / 48</span></div>
-              <button class="primary-button" type="submit">MAKE MY GAME <span aria-hidden="true">↗</span></button>
+              <label class="logo-label" for="businessLogo">Logo (optional)</label>
+              <input id="businessLogo" name="businessLogo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="logoHelp" />
+              <p class="logo-help" id="logoHelp" role="status">PNG, JPG, or WebP. Maximum 100 KB.</p>
+              <button class="primary-button" id="createButton" type="submit">MAKE MY GAME <span aria-hidden="true">↗</span></button>
             </form>
 
-            <div class="fine-print">No account needed for this local demo. Your name is carried in the game link.</div>
+            <div class="fine-print">No account needed. Your name and logo link are carried in the game link.</div>
           </div>
 
           <div class="preview-column">
@@ -76,7 +79,7 @@
         </section>
 
         <section class="how-it-works" aria-label="How it works">
-          <div><span>1</span><p>Enter your business name</p></div>
+          <div><span>1</span><p>Enter your business name and logo</p></div>
           <div><span>2</span><p>Get a game link and QR code</p></div>
           <div><span>3</span><p>Share it so people can play</p></div>
         </section>
