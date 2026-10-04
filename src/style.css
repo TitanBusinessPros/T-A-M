@@ -18,9 +18,10 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 
 .page-shell { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
-.topbar { height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.topbar { min-height: 82px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
 .brand { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 800; letter-spacing: .11em; }
-.auth-button { min-height: 36px; }
+.install-button { margin-left: auto; }
+.auth-button, .install-button { min-height: 36px; }
 .credits-card { display: flex; flex-direction: column; gap: 8px; margin: 0 0 22px; padding: 16px; border: 1px solid #dce4cf; border-radius: 10px; background: #f4f8ed; font-size: 13px; }
 .credits-card span, .credits-card small { color: var(--muted); }
 .buy-button { align-self: flex-start; padding: 11px 14px; border-radius: 7px; background: var(--green); color: var(--ink); font: 500 11px 'DM Mono', monospace; text-decoration: none; }
@@ -94,7 +95,7 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 
 @media (max-width: 760px) {
   .page-shell { padding: 0 20px; }
-  .topbar { height: 68px; }
+  .topbar { min-height: 68px; }
   .intro { padding: 30px 0 32px; }
   .titan-logo { width: 145px; height: 145px; }
   .intro-copy { max-width: 390px; font-size: 14px; }
@@ -107,7 +108,7 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 
 @media (max-width: 420px) {
   .brand { font-size: 12px; }
-  .auth-button { max-width: 150px; padding: 4px; font-size: 9px; }
+  .auth-button, .install-button { max-width: 120px; padding: 4px; font-size: 9px; }
   .builder { padding: 20px; }
   h2 { font-size: 23px; }
   .link-row { flex-direction: column; }
