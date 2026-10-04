@@ -12,6 +12,7 @@
     <div class="page-shell">
       <header class="topbar">
         <a class="brand" href="./" aria-label="Titan App Maker home">Titan App Maker</a>
+        <button id="authButton" class="secondary-button auth-button" type="button">SIGN IN WITH GOOGLE</button>
       </header>
 
       <main>
@@ -28,6 +29,12 @@
             <div class="step-label"><span>01</span> MAKE IT YOURS</div>
             <h2 id="builder-heading">Add your business name</h2>
             <p class="form-copy">Your name appears across the top during gameplay, and your logo appears on the start screen.</p>
+            <div class="credits-card">
+              <strong>Space game: 1 credit</strong>
+              <span id="creditBalance">Sign in to see your credits.</span>
+              <a id="buyCredits" class="buy-button" href="#buy-credits">BUY CREDITS FOR ONLY $5</a>
+              <small>$5 buys 5 credits. Each finished game and QR code uses 1 credit.</small>
+            </div>
 
             <form id="brandForm">
               <label for="businessName">Business name</label>
@@ -39,7 +46,7 @@
               <button class="primary-button" id="createButton" type="submit">MAKE MY GAME <span aria-hidden="true">↗</span></button>
             </form>
 
-            <div class="fine-print">No account needed. Your name and logo link are carried in the game link.</div>
+            <div class="fine-print">Sign in with Google to buy credits and make your game.</div>
           </div>
 
           <div class="preview-column">
@@ -69,7 +76,7 @@
 
         <section class="how-it-works" aria-label="How it works">
           <div><span>1</span><p>Enter your business name and logo</p></div>
-          <div><span>2</span><p>Get a game link and QR code</p></div>
+          <div><span>2</span><p>Use 1 credit to get a game link and QR code</p></div>
           <div><span>3</span><p>Share it so people can play</p></div>
         </section>
       </main>

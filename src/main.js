@@ -1,4 +1,4 @@
-import { trackQrCreated, uploadLogo, validateLogo } from './firebase.js';
+import { createGame, currentUser, getCreditStatus, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js';
 
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');
@@ -18,11 +18,57 @@ const createButton = document.querySelector('#createButton');
 const noLogoWarning = document.querySelector('#noLogoWarning');
 const cancelNoLogo = document.querySelector('#cancelNoLogo');
 const continueNoLogo = document.querySelector('#continueNoLogo');
+const authButton = document.querySelector('#authButton');
+const buyCredits = document.querySelector('#buyCredits');
+const creditBalance = document.querySelector('#creditBalance');
 
 let toastTimer;
 let previewLogoUrl;
 let gameHasLogo = false;
 let confirmedDownload = false;
+let pendingRequestId;
+
+async function refreshCredits() {
+  if (!currentUser()) {
+    creditBalance.textContent = 'Sign in to see your credits.';
+    return;
+  }
+  try {
+    const { credits } = await getCreditStatus();
+    creditBalance.textContent = `${credits} credit${credits === 1 ? '' : 's'} available`;
+  } catch (error) {
+    creditBalance.textContent = 'Could not load credits. Try again.';
+    console.error(error);
+  }
+}
+
+watchUser((user) => {
+  authButton.textContent = user ? `SIGN OUT (${user.displayName || 'GOOGLE'})` : 'SIGN IN WITH GOOGLE';
+  refreshCredits();
+});
+
+authButton.addEventListener('click', async () => {
+  try {
+    if (currentUser()) await signOutUser();
+    else await signIn();
+  } catch (error) {
+    showToast(error.message || 'Could not sign in.');
+  }
+});
+
+buyCredits.addEventListener('click', async (event) => {
+  event.preventDefault();
+  try {
+    if (!currentUser()) await signIn();
+    const { buyUrl } = await getCreditStatus();
+    if (!buyUrl) throw new Error('Payment link is not ready.');
+    window.location.assign(buyUrl);
+  } catch (error) {
+    showToast(error.message || 'Could not open checkout.');
+  }
+});
+
+window.addEventListener('focus', refreshCredits);
 
 function updateLogoPreview() {
   const slot = gamePreview.contentDocument?.querySelector('#sponsorLogoSlot');
@@ -39,6 +85,7 @@ function updateLogoPreview() {
 
 nameInput.addEventListener('input', () => {
   shareCard.hidden = true;
+  pendingRequestId = undefined;
   const value = nameInput.value.trim();
   const title = gamePreview.contentDocument?.querySelector('#gameTitle');
   if (title) {
@@ -54,6 +101,7 @@ gamePreview.addEventListener('load', () => {
 
 logoInput.addEventListener('change', () => {
   shareCard.hidden = true;
+  pendingRequestId = undefined;
   logoHelp.classList.remove('error');
   logoHelp.textContent = 'PNG, JPG, or WebP. Maximum 100 KB.';
   if (previewLogoUrl) URL.revokeObjectURL(previewLogoUrl);
@@ -82,18 +130,21 @@ form.addEventListener('submit', async (event) => {
   const name = nameInput.value.trim();
   if (!name) return;
 
-  const url = new URL('space-game.html', window.location.href);
-  url.searchParams.set('title', name);
-
   try {
     shareCard.hidden = true;
     createButton.disabled = true;
+    if (!currentUser()) await signIn();
     const file = logoInput.files[0];
+    let logoPath = '';
     if (file) {
       validateLogo(file);
       createButton.firstChild.textContent = 'UPLOADING LOGO ';
-      url.searchParams.set('logo', await uploadLogo(file));
+      logoPath = await uploadLogo(file);
     }
+    createButton.firstChild.textContent = 'USING 1 CREDIT ';
+    pendingRequestId ||= crypto.randomUUID();
+    const { gameUrl } = await createGame(name, logoPath, pendingRequestId);
+    const url = new URL(gameUrl);
     createButton.firstChild.textContent = 'MAKING QR CODE ';
     qrTarget.replaceChildren();
     new QRCode(qrTarget, {
@@ -114,11 +165,13 @@ form.addEventListener('submit', async (event) => {
     const fileName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'space-game';
     downloadQr.download = `${fileName}-qr.png`;
     gameHasLogo = Boolean(file);
+    pendingRequestId = undefined;
     shareCard.hidden = false;
     localNote.textContent = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'Local test only: your phone must be on the same Wi-Fi as this computer.'
       : 'Scan this code to open your game with your business name.';
     trackQrCreated();
+    refreshCredits();
     shareCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (error) {
     logoHelp.textContent = error.message || 'Could not make the game. Please try again.';

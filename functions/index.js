@@ -13,6 +13,7 @@ const stripe = new Stripe('sk_test_signature_verification_only');
 const webhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 const region = 'us-central1';
 const gameBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/space-game.html';
+const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function googleUser(request) {
@@ -39,9 +40,7 @@ exports.stripeWebhook = onRequest(
 
     const session = event.data.object;
     try {
-      const config = (await db.doc('billing/config').get()).data();
-      if (!config?.paymentLinkId) return res.status(503).send('Credit link not configured');
-      const credits = creditsForSession(session, config.paymentLinkId);
+      const credits = creditsForSession(session);
       if (!credits) return res.json({ received: true, credited: false });
 
       const uid = session.client_reference_id;
@@ -83,18 +82,10 @@ exports.stripeWebhook = onRequest(
 
 exports.getCreditStatus = onCall({ region, maxInstances: 3 }, async (request) => {
   const uid = googleUser(request);
-  const [account, config] = await Promise.all([
-    db.doc(`creditAccounts/${uid}`).get(), db.doc('billing/config').get(),
-  ]);
-  const paymentLinkUrl = config.data()?.paymentLinkUrl;
-  let buyUrl = null;
-  if (paymentLinkUrl) {
-    const url = new URL(paymentLinkUrl);
-    if (url.protocol === 'https:' && url.hostname === 'buy.stripe.com') {
-      url.searchParams.set('client_reference_id', uid);
-      buyUrl = url.toString();
-    }
-  }
+  const account = await db.doc(`creditAccounts/${uid}`).get();
+  const url = new URL(paymentLinkUrl);
+  url.searchParams.set('client_reference_id', uid);
+  const buyUrl = url.toString();
   return { credits: account.data()?.credits || 0, buyUrl };
 });
 

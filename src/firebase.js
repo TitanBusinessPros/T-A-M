@@ -1,5 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import { getAnalytics, isSupported, logEvent } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD4rgfJIkOtCJbMtlSzGRchkKpEmJt3OOY',
@@ -12,6 +14,18 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const functions = getFunctions(firebaseApp, 'us-central1');
+export const watchUser = (callback) => onAuthStateChanged(auth, callback);
+export const currentUser = () => auth.currentUser;
+export const signIn = () => signInWithPopup(auth, new GoogleAuthProvider());
+export const signOutUser = () => signOut(auth);
+export async function getCreditStatus() {
+  return (await httpsCallable(functions, 'getCreditStatus')()).data;
+}
+export async function createGame(title, logoPath, requestId) {
+  return (await httpsCallable(functions, 'createGame')({ title, logoPath, requestId })).data;
+}
 export const MAX_LOGO_BYTES = 100 * 1024;
 const allowedLogoTypes = new Set(['image/png', 'image/jpeg', 'image/webp']);
 
@@ -23,13 +37,9 @@ export function validateLogo(file) {
 
 export async function uploadLogo(file) {
   validateLogo(file);
-  const [{ getAuth, signInAnonymously }, { getStorage, ref, uploadBytes }] = await Promise.all([
-    import('https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js'),
-    import('https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js'),
-  ]);
-  const auth = getAuth(firebaseApp);
-  await auth.authStateReady();
-  const user = auth.currentUser || (await signInAnonymously(auth)).user;
+  const { getStorage, ref, uploadBytes } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js');
+  const user = auth.currentUser;
+  if (!user) throw new Error('Sign in with Google before uploading a logo.');
   const path = `logos/${user.uid}/${crypto.randomUUID()}`;
   await uploadBytes(ref(getStorage(firebaseApp), path), file, { contentType: file.type, cacheControl: 'public,max-age=3600' });
   return path;

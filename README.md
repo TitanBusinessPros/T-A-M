@@ -1,15 +1,7 @@
-# App Maker 3000: Space Game test
+# Titan App Maker
 
-This static demo lets a business owner enter a name, preview it on the space game, and create a QR code. The name is carried in the game URL, so this version does not save customer information or upload logos.
+The site at https://titanbusinesspros.github.io/T-A-M/ lets a business owner sign in with Google, buy five credits for $5, and use one credit to publish a personalized space game with a QR code. A logo is optional and limited to 100 KB.
 
-## Live test
+GitHub Pages hosts the app and game. Firebase Authentication identifies business owners, Cloud Storage holds logos, Firestore holds games and credit balances, and Cloud Functions verify Stripe payments and charge one credit per published game. The only required Stripe webhook event is `checkout.session.completed`, sent to `https://us-central1-titan-app-maker.cloudfunctions.net/stripeWebhook`.
 
-The GitHub Pages site is deployed from the `main` branch by the workflow in `.github/workflows/pages.yml`. After deployment, open `https://titanbusinesspros.github.io/T-A-M/`, enter a name, and make a QR code; the QR link can be scanned from another device.
-
-## Firebase
-
-The Firebase web configuration is included in `src/firebase.js`, with Analytics turned off. Firebase Hosting, Firestore, Cloud Storage, Authentication, and Cloud Functions are not used by this static test.
-
-## Local test
-
-Serve this folder with a local web server (for example, VS Code Live Server). Firebase and QR helper scripts load from their CDNs, so a network connection is needed.
+Google sign-in authorized domains: `titanbusinesspros.github.io` and `localhost`, plus Firebase's default domains. Serve the directory with a local web server to test locally. Do not store the Stripe webhook signing secret in this repository.
