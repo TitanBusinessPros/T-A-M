@@ -1,6 +1,8 @@
 {
   "auth": { "providers": { "anonymous": true } },
   "storage": { "rules": "storage.rules" },
+  "firestore": { "rules": "firestore.rules" },
+  "functions": [{ "source": "functions", "codebase": "credits" }],
   "hosting": {
     "public": ".",
     "ignore": [
