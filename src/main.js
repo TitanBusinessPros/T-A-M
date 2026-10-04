@@ -17,6 +17,20 @@ const logoHelp = document.querySelector('#logoHelp');
 const createButton = document.querySelector('#createButton');
 
 let toastTimer;
+let previewLogoUrl;
+
+function updateLogoPreview() {
+  const slot = gamePreview.contentDocument?.querySelector('#sponsorLogoSlot');
+  if (!slot) return;
+  if (!previewLogoUrl) {
+    slot.textContent = 'Your logo goes here';
+    return;
+  }
+  const image = gamePreview.contentDocument.createElement('img');
+  image.alt = 'Your logo';
+  image.src = previewLogoUrl;
+  slot.replaceChildren(image);
+}
 
 nameInput.addEventListener('input', () => {
   shareCard.hidden = true;
@@ -28,21 +42,33 @@ nameInput.addEventListener('input', () => {
   }
   count.textContent = `${nameInput.value.length} / 48`;
 });
-gamePreview.addEventListener('load', () => nameInput.dispatchEvent(new Event('input')));
+gamePreview.addEventListener('load', () => {
+  nameInput.dispatchEvent(new Event('input'));
+  updateLogoPreview();
+});
 
 logoInput.addEventListener('change', () => {
   shareCard.hidden = true;
   logoHelp.classList.remove('error');
   logoHelp.textContent = 'PNG, JPG, or WebP. Maximum 100 KB.';
+  if (previewLogoUrl) URL.revokeObjectURL(previewLogoUrl);
+  previewLogoUrl = null;
   const file = logoInput.files[0];
-  if (!file) return;
-  try {
-    validateLogo(file);
-  } catch (error) {
-    logoInput.value = '';
-    logoHelp.textContent = error.message;
-    logoHelp.classList.add('error');
+  if (file) {
+    try {
+      validateLogo(file);
+      previewLogoUrl = URL.createObjectURL(file);
+    } catch (error) {
+      logoInput.value = '';
+      logoHelp.textContent = error.message;
+      logoHelp.classList.add('error');
+    }
   }
+  updateLogoPreview();
+});
+
+window.addEventListener('pagehide', () => {
+  if (previewLogoUrl) URL.revokeObjectURL(previewLogoUrl);
 });
 
 form.addEventListener('submit', async (event) => {
