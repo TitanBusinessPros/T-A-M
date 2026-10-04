@@ -18,23 +18,72 @@
         canvas {
             display: block;
         }
-        #startButton {
+        #startScreen {
             position: absolute;
-            top: calc(50% + 160px);
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 10px 16px;
-            border: 0;
-            background: transparent;
-            color: #ffff00;
-            font: bold 36px 'Courier New', monospace;
-            text-shadow: 0 0 20px #ffff00;
-            cursor: pointer;
-            z-index: 2;
-            touch-action: manipulation;
+            inset: 0;
+            z-index: 100;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            gap: 12px;
+            padding: clamp(16px, 4vh, 32px) 18px;
+            overflow-y: auto;
+            background: #000;
+            color: #fff;
+            text-align: center;
         }
-        @media (max-width: 600px) {
-            #startButton { font-size: 24px; }
+        #startScreen[hidden] { display: none; }
+        #startScreen > * { flex-shrink: 0; }
+        .sponsor-area { display: grid; justify-items: center; gap: 8px; }
+        .sponsor-label {
+            color: #00ffff;
+            font-size: clamp(13px, 3vw, 17px);
+            font-weight: bold;
+            letter-spacing: .12em;
+        }
+        .sponsor-logo {
+            box-sizing: border-box;
+            display: grid;
+            place-items: center;
+            width: min(240px, 62vw);
+            min-height: clamp(64px, 14vh, 120px);
+            padding: 12px;
+            border: 2px dashed #00ffff;
+            border-radius: 10px;
+            color: #fff;
+            font-size: clamp(16px, 4vw, 25px);
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+        .start-copy { width: min(620px, 100%); }
+        .start-copy h1 {
+            margin: 0;
+            color: #00ff00;
+            font-size: clamp(24px, 6vw, 48px);
+            line-height: 1.14;
+            text-shadow: 0 0 18px #00ff00;
+            overflow-wrap: anywhere;
+        }
+        .start-copy p { margin: 12px 0 0; }
+        .start-copy .game-meta { color: #b7ffbd; font-size: clamp(15px, 3vw, 21px); }
+        .start-copy .controls { color: #fff; font-size: clamp(14px, 2.8vw, 19px); line-height: 1.4; }
+        .controls-touch { display: none; }
+        @media (pointer: coarse) {
+            .controls-touch { display: block; }
+            .controls-desktop { display: none; }
+        }
+        #startButton {
+            padding: 10px 18px;
+            border: 2px solid #ffff00;
+            border-radius: 8px;
+            background: rgba(255, 255, 0, .12);
+            color: #ffff00;
+            font: bold clamp(22px, 5vw, 32px) 'Courier New', monospace;
+            text-shadow: 0 0 16px #ffff00;
+            cursor: pointer;
+            touch-action: manipulation;
         }
         #levelTransition {
             position: absolute;
@@ -183,10 +232,22 @@
 </head>
 <body>
     <canvas id="game"></canvas>
-    <button id="startButton" type="button">TAP TO START</button>
+    <div id="startScreen">
+        <div class="sponsor-area">
+            <div class="sponsor-label">Sponsored By</div>
+            <div id="sponsorLogoSlot" class="sponsor-logo">YOUR BUSINESS</div>
+        </div>
+        <div class="start-copy">
+            <h1>Protect Earth from alien invasion!</h1>
+            <p class="game-meta">15 Levels | 5 Lives</p>
+            <p class="controls controls-touch">Touch and drag to aim and fire</p>
+            <p class="controls controls-desktop">WASD to move | Mouse to aim and fire</p>
+        </div>
+        <button id="startButton" type="button">TAP TO START</button>
+    </div>
     <div id="gameTitle" class="hidden">SPACE GAME</div>
     <div id="levelTransition"></div>
-    <button id="pauseButton">PAUSE</button>
+    <button id="pauseButton" hidden>PAUSE</button>
     <div id="pauseScreen">
         <div>GAME PAUSED</div>
         <div style="font-size: 24px; margin-top: 20px;">Tap RESUME GAME to continue</div>
@@ -199,6 +260,7 @@
     <script>
         const businessTitle = (new URLSearchParams(window.location.search).get('title') || 'SPACE GAME').trim().slice(0, 48);
         document.getElementById('gameTitle').textContent = businessTitle || 'SPACE GAME';
+        document.getElementById('sponsorLogoSlot').textContent = businessTitle || 'SPACE GAME';
         document.title = businessTitle || 'Space Game';
 
         const canvas = document.getElementById('game');
@@ -869,50 +931,6 @@
         function showStartScreen() {
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            const isMobile = canvas.width < 600;
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            ctx.fillStyle = '#00ff00';
-            ctx.shadowBlur = 30;
-            ctx.shadowColor = '#00ff00';
-            
-            const titleSize = isMobile ? 36 : 72;
-            ctx.font = `bold ${titleSize}px Courier New`;
-            ctx.fillText('', centerX, centerY - 100);
-            
-            ctx.shadowBlur = 20;
-            const subtitleSize = isMobile ? 18 : 32;
-            ctx.font = `${subtitleSize}px Courier New`;
-            ctx.fillText('Protect Earth from alien invasion!', centerX, centerY - 30);
-            ctx.fillText('15 Levels | 5 Lives', centerX, centerY + 10); // Updated to 15 levels
-            
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowBlur = 10;
-            const instructSize = isMobile ? 14 : 24;
-            ctx.font = `${instructSize}px Courier New`;
-            const usesTouch = window.matchMedia?.('(pointer: coarse)').matches || (window.navigator?.maxTouchPoints || 0) > 0;
-            if (usesTouch) {
-                ctx.fillText('TOUCH & DRAG - Aim & Fire', centerX, centerY + 90);
-            } else {
-                ctx.fillText('WASD - Move Ship', centerX, centerY + 70);
-                ctx.fillText('MOUSE - Aim & Fire', centerX, centerY + 100);
-                ctx.fillText('CLICK PAUSE TO PAUSE', centerX, centerY + 130);
-            }
-            
-            ctx.fillStyle = '#ffff00';
-            ctx.shadowColor = '#ffff00';
-            ctx.shadowBlur = 20;
-            const startSize = isMobile ? 24 : 36;
-            ctx.font = `bold ${startSize}px Courier New`;
-
-            
-            ctx.shadowBlur = 0;
-            ctx.textBaseline = 'alphabetic';
         }
 
         function showGameOver() {
@@ -1376,7 +1394,8 @@
             gameRunning = true;
             startLevel(1);
             document.getElementById('gameTitle').classList.remove('hidden');
-            document.getElementById('startButton').hidden = true;
+            document.getElementById('startScreen').hidden = true;
+            document.getElementById('pauseButton').hidden = false;
             scheduleGameLoop();
         }
         function handleRestartClick(x, y) {
