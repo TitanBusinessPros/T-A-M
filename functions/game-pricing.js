@@ -7,6 +7,7 @@ function gameCost(gameType) {
   if (gameType === 'pinball') return 1;
   if (gameType === 'invoiceGenerator') return 2;
   if (gameType === 'match3') return 2;
+  if (gameType === 'followAlong') return 2;
   return null;
 }
 

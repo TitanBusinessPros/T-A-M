@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with custom games and apps from Titan App Maker." />
     <title>Titan App Maker | Custom Games &amp; Apps</title>
-    <link rel="stylesheet" href="./src/style.css?v=12" />
+    <link rel="stylesheet" href="./src/style.css?v=13" />
   </head>
   <body>
     <div class="page-shell">
@@ -321,9 +321,43 @@
           <div class="qr-wrap"><div id="match3QrTarget" role="img" aria-label="QR code for your Match 3 game"></div><a id="match3DownloadQr" class="download-link" download="match-3-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
         </section>
 
+        <section class="builder follow-along-builder" aria-labelledby="followAlong-heading">
+          <div class="builder-form">
+            <div class="step-label"><span>01</span> MAKE IT YOURS</div>
+            <h2 id="followAlong-heading">Follow Along game</h2>
+            <p class="form-copy">Add your logo and website. Players see “Sponsored by” above your logo in a white box to the right of the game, with your clickable website below it.</p>
+            <div class="credits-card"><strong>Follow Along game: 2 credits</strong><small>Creating your finished Follow Along game and QR code uses 2 credits. Your balance is shown above when signed in.</small></div>
+            <form id="followAlongForm">
+              <label for="followAlongLogo">Sponsor logo (required)</label>
+              <input id="followAlongLogo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="followAlongStatus" required />
+              <label class="logo-label" for="followAlongWebsite">Website address</label>
+              <input id="followAlongWebsite" name="website" type="text" inputmode="url" maxlength="512" placeholder="example.com" autocomplete="url" required />
+              <p class="logo-help" id="followAlongStatus" role="status" aria-live="polite">PNG, JPG, or WebP logo. Maximum 100 KB. Your logo and website update in the preview.</p>
+              <button class="primary-button" id="followAlongCreateButton" type="submit">MAKE MY FOLLOW ALONG GAME <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your game. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+          </div>
+          <div class="preview-column">
+            <div class="step-label"><span>02</span> PLAYABLE PREVIEW</div>
+            <div class="game-preview follow-along-preview"><iframe id="followAlongPreview" src="./follow-along-game.html?preview=1" title="Playable Follow Along game with sponsor preview"></iframe></div>
+            <p class="preview-caption">Play Follow Along here. Your logo and website appear beside the game as you add them.</p>
+          </div>
+        </section>
+
+        <section class="share-card" id="followAlongShareCard" hidden aria-live="polite" aria-labelledby="followAlongShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="followAlongShareHeading">Your Follow Along game is ready</h2>
+            <p>Share the link or scan the code so people can play your branded Follow Along game.</p>
+            <div class="link-row"><input id="followAlongLink" type="text" readonly aria-label="Your Follow Along game link" /><button id="followAlongCopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="followAlongOpenGame" class="open-game-link" target="_blank" rel="noopener">OPEN GAME ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="followAlongQrTarget" role="img" aria-label="QR code for your Follow Along game"></div><a id="followAlongDownloadQr" class="download-link" download="follow-along-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
+        </section>
+
         <section class="how-it-works" aria-label="How it works">
           <div><span>1</span><p>Choose a game or app and add your company details</p></div>
-          <div><span>2</span><p>Use 1 credit for Space, Chess, or Pinball, 2 for the QR tool, Invoice Generator, or Match 3, 3 for Website Maker, or 4 for Checkers</p></div>
+          <div><span>2</span><p>Use 1 credit for Space, Chess, or Pinball, 2 for the QR tool, Invoice Generator, Match 3, or Follow Along, 3 for Website Maker, or 4 for Checkers</p></div>
           <div><span>3</span><p>Share your branded game or app so people can use it</p></div>
         </section>
       </main>
@@ -348,7 +382,7 @@
     </dialog>
     <dialog id="creditPurchaseDialog" class="purchase-dialog" aria-labelledby="creditPurchaseTitle" aria-describedby="finalSaleNotice">
       <h2 id="creditPurchaseTitle">Buy 5 credits for $5</h2>
-      <p>Space, Chess, and Pinball games use 1 credit, the QR tool, Invoice Generator, and Match 3 use 2, Website Maker uses 3, and Checkers games use 4.</p>
+      <p>Space, Chess, and Pinball games use 1 credit, the QR tool, Invoice Generator, Match 3, and Follow Along use 2, Website Maker uses 3, and Checkers games use 4.</p>
       <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
       <label class="purchase-consent" for="purchaseTerms">
         <input id="purchaseTerms" type="checkbox" />
@@ -368,5 +402,6 @@
     <script type="module" src="./src/website-maker-builder.js?v=2"></script>
     <script type="module" src="./src/invoice-generator-builder.js?v=2"></script>
     <script type="module" src="./src/match3-builder.js?v=1"></script>
+    <script type="module" src="./src/follow-along-builder.js?v=1"></script>
   </body>
 </html>
