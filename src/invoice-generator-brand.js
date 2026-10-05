@@ -31,6 +31,9 @@ if (gameId) {
     }
     const url = new URL(tool.data().website);
     if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Invalid Invoice Generator website.');
+    document.querySelector('#sponsor-logo-placeholder').textContent = 'Logo loading...';
+    setInvoiceBrand('', url.toString());
+    document.documentElement.classList.remove('brand-loading');
     const logoUrl = await getLogoURL(tool.data().logoPath);
     await new Promise((resolve, reject) => {
       const image = new Image();
@@ -41,7 +44,8 @@ if (gameId) {
     setInvoiceBrand(logoUrl, url.toString());
   } catch (error) {
     document.querySelector('#sponsor-logo-placeholder').textContent = 'Logo unavailable';
-    document.querySelector('#sponsor-website').textContent = 'Website unavailable';
+    const websiteLink = document.querySelector('#sponsor-website');
+    if (websiteLink.getAttribute('aria-disabled') === 'true') websiteLink.textContent = 'Website unavailable';
     console.error(error);
   } finally {
     document.documentElement.classList.remove('brand-loading');

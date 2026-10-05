@@ -46,6 +46,7 @@ preview.addEventListener('load', () => {
   updatePreview();
   preview.contentWindow?.showAdModal?.();
 });
+updatePreview();
 logoInput.addEventListener('change', () => {
   resetResult();
   if (previewUrl) URL.revokeObjectURL(previewUrl);

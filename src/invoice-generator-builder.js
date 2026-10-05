@@ -43,6 +43,7 @@ function resetResult() {
 }
 
 preview.addEventListener('load', updatePreview);
+updatePreview();
 logoInput.addEventListener('change', () => {
   resetResult();
   if (previewUrl) URL.revokeObjectURL(previewUrl);

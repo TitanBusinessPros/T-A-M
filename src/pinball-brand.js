@@ -31,6 +31,9 @@ if (gameId) {
     }
     const url = new URL(game.data().website);
     if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Invalid Pinball game website.');
+    document.querySelector('#sponsorLogoPlaceholder').textContent = 'Logo loading...';
+    setPinballBrand('', url.toString());
+    document.documentElement.classList.remove('brand-loading');
     const logoUrl = await getLogoURL(game.data().logoPath);
     await new Promise((resolve, reject) => {
       const image = new Image();
@@ -41,7 +44,8 @@ if (gameId) {
     setPinballBrand(logoUrl, url.toString());
   } catch (error) {
     document.querySelector('#sponsorLogoPlaceholder').textContent = 'Sponsor unavailable';
-    document.querySelector('#sponsorWebsite').textContent = 'Website unavailable';
+    const websiteLink = document.querySelector('#sponsorWebsite');
+    if (websiteLink.getAttribute('aria-disabled') === 'true') websiteLink.textContent = 'Website unavailable';
     console.error(error);
   } finally {
     document.documentElement.classList.remove('brand-loading');
