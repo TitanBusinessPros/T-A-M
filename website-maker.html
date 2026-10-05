@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+
+        .builder-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            width: 320px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .control-panel h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #3498db;
+            text-transform: uppercase;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #ecf0f1;
+        }
+
+        .control-group input[type="text"],
+        .control-group input[type="color"],
+        .control-group select,
+        .control-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .control-group textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .control-group input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        /* Preview Area */
+        .preview-area {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+        }
+
+        #preview {
+            min-height: 100%;
+        }
+
+        /* Landing Page Styles */
+        .landing-header {
+            padding: 20px 40px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .landing-header { text-align: center; }
+
+        .landing-header img { display: block; max-width: 160px; max-height: 100px; object-fit: contain; margin: 0 auto 10px; }
+        .landing-header img[hidden] { display: none; }
+
+        .landing-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+        }
+
+        .hero-section {
+            min-height: 400px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .content-section {
+            padding: 60px 40px;
+        }
+
+        .content-block {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .content-image {
+            flex: 0 0 300px;
+            max-width: 100%;
+        }
+
+        .content-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .content-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .content-text h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .content-text p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .content-block.image-right {
+            flex-direction: row-reverse;
+        }
+
+        .content-block.image-left {
+            flex-direction: row;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer-section p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            background: #34495e;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #3498db;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .color-input-wrapper input[type="text"] {
+            flex: 1;
+        }
+
+        .section-divider {
+            border-top: 2px solid #34495e;
+            margin: 20px 0;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .builder-container {
+                flex-direction: column;
+            }
+
+            .control-panel {
+                width: 100%;
+                max-height: 50vh;
+            }
+
+            .content-block {
+                flex-direction: column;
+            }
+
+            .content-image {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>Landing Page Builder</h2>
+
+            <!-- Header Section -->
+            <div class="control-section">
+                <h3>Header</h3>
+                <div class="control-group">
+                    <label>Header Title</label>
+                    <input type="text" id="headerTitle" value="Your Company Name" maxlength="48" placeholder="Enter header title">
+                </div>
+                <div class="control-group">
+                    <label for="websiteLogo">Your logo (optional, max 100 KB)</label>
+                    <input type="file" id="websiteLogo" accept="image/png,image/jpeg,image/webp">
+                    <p id="logoStatus" role="status" style="font-size: 13px; margin-top: 7px;"></p>
+                </div>
+                <div class="control-group">
+                    <label>Header Font</label>
+                    <select id="headerFont">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="Impact, sans-serif">Impact</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Header Font Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="headerColor" value="#2c3e50">
+                        <input type="text" id="headerColorText" value="#2c3e50" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Section -->
+            <div class="control-section">
+                <h3>Hero Section</h3>
+                <div class="control-group">
+                    <label>Hero Title</label>
+                    <input type="text" id="heroTitle" value="Welcome to Our Landing Page" placeholder="Enter hero title">
+                </div>
+                <div class="control-group">
+                    <label>Hero Subtitle</label>
+                    <textarea id="heroSubtitle" placeholder="Enter hero subtitle">Transform your business with our amazing solutions</textarea>
+                </div>
+                <div class="control-group">
+                    <label>Hero Font</label>
+                    <select id="heroFont">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="Georgia, serif" selected>Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="Impact, sans-serif">Impact</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Hero Font Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="heroColor" value="#ffffff">
+                        <input type="text" id="heroColorText" value="#ffffff" readonly>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Hero Background Image</label>
+                    <input type="file" id="heroImage" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Background Options -->
+            <div class="control-section">
+                <h3>Page Background</h3>
+                <div class="control-group">
+                    <label>Background Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="bgColor" value="#ffffff">
+                        <input type="text" id="bgColorText" value="#ffffff" readonly>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Background Image</label>
+                    <input type="file" id="bgImage" accept="image/*">
+                </div>
+                <button class="btn" onclick="clearBgImage()">Clear Background Image</button>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="control-section">
+                <h3>Content Sections</h3>
+
+                <!-- Section 1 -->
+                <div class="section-divider">
+                    <h4 style="color: #3498db; margin-bottom: 10px;">Section 1</h4>
+                    <div class="control-group">
+                        <label>Title</label>
+                        <input type="text" id="contentTitle1" value="About Our Service" placeholder="Enter section title">
+                    </div>
+                    <div class="control-group">
+                        <label>Text</label>
+                        <textarea id="contentText1" placeholder="Enter your content text">We provide cutting-edge solutions that help businesses grow and succeed in the digital age.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label>Image Position</label>
+                        <select id="imagePos1">
+                            <option value="left">Left</option>
+                            <option value="right" selected>Right</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Image</label>
+                        <input type="file" id="contentImage1" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="section-divider">
+                    <h4 style="color: #3498db; margin-bottom: 10px;">Section 2</h4>
+                    <div class="control-group">
+                        <label>Title</label>
+                        <input type="text" id="contentTitle2" value="Our Features" placeholder="Enter section title">
+                    </div>
+                    <div class="control-group">
+                        <label>Text</label>
+                        <textarea id="contentText2" placeholder="Enter your content text">Discover powerful features designed to streamline your workflow and boost productivity.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label>Image Position</label>
+                        <select id="imagePos2">
+                            <option value="left" selected>Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Image</label>
+                        <input type="file" id="contentImage2" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="section-divider">
+                    <h4 style="color: #3498db; margin-bottom: 10px;">Section 3</h4>
+                    <div class="control-group">
+                        <label>Title</label>
+                        <input type="text" id="contentTitle3" value="Why Choose Us" placeholder="Enter section title">
+                    </div>
+                    <div class="control-group">
+                        <label>Text</label>
+                        <textarea id="contentText3" placeholder="Enter your content text">Our commitment to excellence and customer satisfaction sets us apart from the competition.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label>Image Position</label>
+                        <select id="imagePos3">
+                            <option value="left">Left</option>
+                            <option value="right" selected>Right</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Image</label>
+                        <input type="file" id="contentImage3" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="section-divider">
+                    <h4 style="color: #3498db; margin-bottom: 10px;">Section 4</h4>
+                    <div class="control-group">
+                        <label>Title</label>
+                        <input type="text" id="contentTitle4" value="Get Started Today" placeholder="Enter section title">
+                    </div>
+                    <div class="control-group">
+                        <label>Text</label>
+                        <textarea id="contentText4" placeholder="Enter your content text">Join thousands of satisfied customers who have transformed their business with our solutions.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label>Image Position</label>
+                        <select id="imagePos4">
+                            <option value="left" selected>Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Image</label>
+                        <input type="file" id="contentImage4" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Section 5 -->
+                <div class="section-divider">
+                    <h4 style="color: #3498db; margin-bottom: 10px;">Section 5</h4>
+                    <div class="control-group">
+                        <label>Title</label>
+                        <input type="text" id="contentTitle5" value="Contact Us" placeholder="Enter section title">
+                    </div>
+                    <div class="control-group">
+                        <label>Text</label>
+                        <textarea id="contentText5" placeholder="Enter your content text">Ready to take the next step? Get in touch with our team to learn more about our services.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label>Image Position</label>
+                        <select id="imagePos5">
+                            <option value="left">Left</option>
+                            <option value="right" selected>Right</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Image</label>
+                        <input type="file" id="contentImage5" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="control-group" style="margin-top: 20px;">
+                    <label>Content Font</label>
+                    <select id="contentFont">
+                        <option value="Arial, sans-serif" selected>Arial</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="Impact, sans-serif">Impact</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Content Font Color</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="contentColor" value="#555555">
+                        <input type="text" id="contentColorText" value="#555555" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div class="control-section">
+                <h3>Footer</h3>
+                <div class="control-group">
+                    <label>Company Name</label>
+                    <input type="text" id="footerCompany" value="Your Company Name" placeholder="Company name">
+                </div>
+                <div class="control-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="footerPhone" value="(555) 123-4567" placeholder="Phone number">
+                </div>
+                <div class="control-group">
+                    <label>Service Area</label>
+                    <input type="text" id="footerArea" value="Serving Tulsa, OK and surrounding areas" placeholder="Service area">
+                </div>
+                <div class="control-group">
+                    <label>Copyright Year</label>
+                    <input type="text" id="footerYear" value="2024" placeholder="Year">
+                </div>
+                <div class="control-group">
+                    <label>Facebook URL</label>
+                    <input type="text" id="footerFacebook" value="" placeholder="https://facebook.com/yourpage">
+                </div>
+                <div class="control-group">
+                    <label>X (Twitter) URL</label>
+                    <input type="text" id="footerX" value="" placeholder="https://x.com/yourhandle">
+                </div>
+                <div class="control-group">
+                    <label>Instagram URL</label>
+                    <input type="text" id="footerInstagram" value="" placeholder="https://instagram.com/yourhandle">
+                </div>
+                <div class="control-group">
+                    <label>YouTube URL</label>
+                    <input type="text" id="footerYoutube" value="" placeholder="https://youtube.com/yourchannel">
+                </div>
+            </div>
+
+            <!-- Export -->
+            <div class="control-section">
+                <p style="font-size: 16px; line-height: 1.5;">Get a free website forever using GitHub!</p>
+                <button id="exportButton" class="btn btn-success" onclick="exportHTML()">Export to HTML · 3 credits</button>
+                <p id="exportStatus" role="status" style="font-size: 13px; line-height: 1.5; margin-top: 9px;"></p>
+            </div>
+
+            <div class="control-section" style="border-top: 3px solid #3498db; padding-top: 20px; margin-top: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; color: #2c3e50;">
+                <p style="font-size: 20px; font-weight: 700;">Put your logo here</p>
+                <p style="font-size: 16px; line-height: 1.5; margin: 12px 8px; font-weight: 700;">This branding is for informational purposes only and does not appear in exported pages</p>
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <div id="preview">
+                <header class="landing-header">
+                    <img id="previewLogo" alt="Your logo" hidden>
+                    <h1 id="previewHeaderTitle">Your Company Name</h1>
+                </header>
+
+                <section class="hero-section" id="previewHero" style="background-color: #3498db;">
+                    <div class="hero-content">
+                        <h2 class="hero-title" id="previewHeroTitle">Welcome to Our Landing Page</h2>
+                        <p class="hero-subtitle" id="previewHeroSubtitle">Transform your business with our amazing solutions</p>
+                    </div>
+                </section>
+
+                <section class="content-section" id="previewContent">
+                    <div class="content-block image-right" id="contentBlock1">
+                        <div class="content-image" id="contentImageWrapper1" style="display: none;">
+                            <img id="previewContentImage1" src="" alt="Content">
+                        </div>
+                        <div class="content-text">
+                            <h3 id="previewContentTitle1">About Our Service</h3>
+                            <p id="previewContentText1">We provide cutting-edge solutions that help businesses grow and succeed in the digital age.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-block image-left" id="contentBlock2">
+                        <div class="content-image" id="contentImageWrapper2" style="display: none;">
+                            <img id="previewContentImage2" src="" alt="Content">
+                        </div>
+                        <div class="content-text">
+                            <h3 id="previewContentTitle2">Our Features</h3>
+                            <p id="previewContentText2">Discover powerful features designed to streamline your workflow and boost productivity.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-block image-right" id="contentBlock3">
+                        <div class="content-image" id="contentImageWrapper3" style="display: none;">
+                            <img id="previewContentImage3" src="" alt="Content">
+                        </div>
+                        <div class="content-text">
+                            <h3 id="previewContentTitle3">Why Choose Us</h3>
+                            <p id="previewContentText3">Our commitment to excellence and customer satisfaction sets us apart from the competition.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-block image-left" id="contentBlock4">
+                        <div class="content-image" id="contentImageWrapper4" style="display: none;">
+                            <img id="previewContentImage4" src="" alt="Content">
+                        </div>
+                        <div class="content-text">
+                            <h3 id="previewContentTitle4">Get Started Today</h3>
+                            <p id="previewContentText4">Join thousands of satisfied customers who have transformed their business with our solutions.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-block image-right" id="contentBlock5">
+                        <div class="content-image" id="contentImageWrapper5" style="display: none;">
+                            <img id="previewContentImage5" src="" alt="Content">
+                        </div>
+                        <div class="content-text">
+                            <h3 id="previewContentTitle5">Contact Us</h3>
+                            <p id="previewContentText5">Ready to take the next step? Get in touch with our team to learn more about our services.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="footer" id="previewFooter">
+                    <div class="footer-content">
+                        <div class="footer-section">
+                            <h4 id="footerCompanyName">Your Company Name</h4>
+                        </div>
+                        <div class="footer-section">
+                            <h4>Contact</h4>
+                            <p id="footerPhoneNum">(555) 123-4567</p>
+                        </div>
+                        <div class="footer-section">
+                            <h4>Service Area</h4>
+                            <p id="footerServiceArea">Serving Tulsa, OK and surrounding areas</p>
+                        </div>
+                    </div>
+                    <div class="social-links" id="socialLinks">
+                    </div>
+                    <div class="footer-bottom">
+                        <p id="footerCopyright">&copy; 2024 Your Company Name. All rights reserved.</p>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let websiteLogoData = '';
+        document.getElementById('websiteLogo').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const status = document.getElementById('logoStatus');
+            const previewLogo = document.getElementById('previewLogo');
+            websiteLogoData = '';
+            previewLogo.hidden = true;
+            previewLogo.removeAttribute('src');
+            if (!file) return;
+            if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 100 * 1024) {
+                event.target.value = '';
+                status.textContent = 'Choose a PNG, JPG, or WebP logo under 100 KB.';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                websiteLogoData = reader.result;
+                previewLogo.src = websiteLogoData;
+                previewLogo.hidden = false;
+                status.textContent = 'Your logo appears in the preview and exported website.';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Real-time preview updates
+        document.getElementById('headerTitle').addEventListener('input', function(e) {
+            document.getElementById('previewHeaderTitle').textContent = e.target.value;
+        });
+
+        document.getElementById('headerFont').addEventListener('change', function(e) {
+            document.querySelector('.landing-header h1').style.fontFamily = e.target.value;
+        });
+
+        document.getElementById('headerColor').addEventListener('input', function(e) {
+            document.querySelector('.landing-header h1').style.color = e.target.value;
+            document.getElementById('headerColorText').value = e.target.value;
+        });
+
+        document.getElementById('heroTitle').addEventListener('input', function(e) {
+            document.getElementById('previewHeroTitle').textContent = e.target.value;
+        });
+
+        document.getElementById('heroSubtitle').addEventListener('input', function(e) {
+            document.getElementById('previewHeroSubtitle').textContent = e.target.value;
+        });
+
+        document.getElementById('heroFont').addEventListener('change', function(e) {
+            document.querySelector('.hero-title').style.fontFamily = e.target.value;
+            document.querySelector('.hero-subtitle').style.fontFamily = e.target.value;
+        });
+
+        document.getElementById('heroColor').addEventListener('input', function(e) {
+            document.querySelector('.hero-title').style.color = e.target.value;
+            document.querySelector('.hero-subtitle').style.color = e.target.value;
+            document.getElementById('heroColorText').value = e.target.value;
+        });
+
+        // Content sections (1-5)
+        for (let i = 1; i <= 5; i++) {
+            document.getElementById(`contentTitle${i}`).addEventListener('input', function(e) {
+                document.getElementById(`previewContentTitle${i}`).textContent = e.target.value;
+            });
+
+            document.getElementById(`contentText${i}`).addEventListener('input', function(e) {
+                document.getElementById(`previewContentText${i}`).textContent = e.target.value;
+            });
+
+            document.getElementById(`imagePos${i}`).addEventListener('change', function(e) {
+                const block = document.getElementById(`contentBlock${i}`);
+                if (e.target.value === 'left') {
+                    block.className = 'content-block image-left';
+                } else {
+                    block.className = 'content-block image-right';
+                }
+            });
+
+            document.getElementById(`contentImage${i}`).addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById(`previewContentImage${i}`).src = event.target.result;
+                        document.getElementById(`contentImageWrapper${i}`).style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        document.getElementById('contentFont').addEventListener('change', function(e) {
+            document.getElementById('previewContent').style.fontFamily = e.target.value;
+        });
+
+        document.getElementById('contentColor').addEventListener('input', function(e) {
+            const contentSections = document.querySelectorAll('.content-text p, .content-text h3');
+            contentSections.forEach(section => {
+                section.style.color = e.target.value;
+            });
+            document.getElementById('contentColorText').value = e.target.value;
+        });
+
+        // Footer updates
+        document.getElementById('footerCompany').addEventListener('input', function(e) {
+            document.getElementById('footerCompanyName').textContent = e.target.value;
+            updateFooterCopyright();
+        });
+
+        document.getElementById('footerPhone').addEventListener('input', function(e) {
+            document.getElementById('footerPhoneNum').textContent = e.target.value;
+        });
+
+        document.getElementById('footerArea').addEventListener('input', function(e) {
+            document.getElementById('footerServiceArea').textContent = e.target.value;
+        });
+
+        document.getElementById('footerYear').addEventListener('input', updateFooterCopyright);
+
+        function updateFooterCopyright() {
+            const year = document.getElementById('footerYear').value;
+            const company = document.getElementById('footerCompany').value;
+            document.getElementById('footerCopyright').textContent = `© ${year} ${company}. All rights reserved.`;
+        }
+
+        // Social media links
+        function updateSocialLinks() {
+            const fb = document.getElementById('footerFacebook').value;
+            const x = document.getElementById('footerX').value;
+            const ig = document.getElementById('footerInstagram').value;
+            const yt = document.getElementById('footerYoutube').value;
+
+            let html = '';
+            if (fb) html += `<a href="${fb}" target="_blank">Facebook</a>`;
+            if (x) html += `<a href="${x}" target="_blank">X</a>`;
+            if (ig) html += `<a href="${ig}" target="_blank">Instagram</a>`;
+            if (yt) html += `<a href="${yt}" target="_blank">YouTube</a>`;
+
+            document.getElementById('socialLinks').innerHTML = html;
+        }
+
+        document.getElementById('footerFacebook').addEventListener('input', updateSocialLinks);
+        document.getElementById('footerX').addEventListener('input', updateSocialLinks);
+        document.getElementById('footerInstagram').addEventListener('input', updateSocialLinks);
+        document.getElementById('footerYoutube').addEventListener('input', updateSocialLinks);
+
+        // Background color
+        document.getElementById('bgColor').addEventListener('input', function(e) {
+            document.getElementById('previewContent').style.backgroundColor = e.target.value;
+            document.getElementById('bgColorText').value = e.target.value;
+        });
+
+        // Hero image upload
+        document.getElementById('heroImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewHero').style.backgroundImage = `url(${event.target.result})`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Background image upload
+        document.getElementById('bgImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewContent').style.backgroundImage = `url(${event.target.result})`;
+                    document.getElementById('previewContent').style.backgroundSize = 'cover';
+                    document.getElementById('previewContent').style.backgroundPosition = 'center';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Clear background image
+        function clearBgImage() {
+            document.getElementById('previewContent').style.backgroundImage = 'none';
+            document.getElementById('bgImage').value = '';
+        }
+
+        // Export to HTML
+        let pendingExportId = '';
+        async function exportHTML() {
+            const button = document.getElementById('exportButton');
+            const status = document.getElementById('exportStatus');
+            if (button.disabled) return;
+            button.disabled = true;
+            status.textContent = 'Preparing your website...';
+            try {
+                const title = document.getElementById('headerTitle').value.trim();
+                if (!title) throw new Error('Enter a header title before exporting.');
+            const preview = document.getElementById('preview');
+            const headerFont = document.getElementById('headerFont').value;
+            const headerColor = document.getElementById('headerColor').value;
+            const heroFont = document.getElementById('heroFont').value;
+            const heroColor = document.getElementById('heroColor').value;
+            const contentFont = document.getElementById('contentFont').value;
+            const contentColor = document.getElementById('contentColor').value;
+
+            // Get all section data
+            let sectionsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const imagePos = document.getElementById(`imagePos${i}`).value;
+                const imageWrapper = document.getElementById(`contentImageWrapper${i}`);
+                const imageDisplay = imageWrapper.style.display;
+                const imageSrc = document.getElementById(`previewContentImage${i}`).src;
+                const title = document.getElementById(`contentTitle${i}`).value;
+                const text = document.getElementById(`contentText${i}`).value;
+
+                const blockClass = imagePos === 'left' ? 'content-block image-left' : 'content-block image-right';
+
+                sectionsHTML += `
+                    <div class="${blockClass}">`;
+
+                if (imageDisplay !== 'none' && imageSrc) {
+                    sectionsHTML += `
+                        <div class="content-image">
+                            <img src="${imageSrc}" alt="Content">
+                        </div>`;
+                }
+
+                sectionsHTML += `
+                        <div class="content-text">
+                            <h3>${title}</h3>
+                            <p>${text}</p>
+                        </div>
+                    </div>`;
+            }
+
+            // Get social links
+            const fb = document.getElementById('footerFacebook').value;
+            const x = document.getElementById('footerX').value;
+            const ig = document.getElementById('footerInstagram').value;
+            const yt = document.getElementById('footerYoutube').value;
+
+            let socialHTML = '';
+            if (fb || x || ig || yt) {
+                socialHTML = '<div class="social-links">';
+                if (fb) socialHTML += `<a href="${fb}" target="_blank">Facebook</a>`;
+                if (x) socialHTML += `<a href="${x}" target="_blank">X</a>`;
+                if (ig) socialHTML += `<a href="${ig}" target="_blank">Instagram</a>`;
+                if (yt) socialHTML += `<a href="${yt}" target="_blank">YouTube</a>`;
+                socialHTML += '</div>';
+            }
+
+            const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${document.getElementById('headerTitle').value}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .landing-header {
+            padding: 20px 40px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .landing-header { text-align: center; }
+
+        .landing-header img { display: block; max-width: 160px; max-height: 100px; object-fit: contain; margin: 0 auto 10px; }
+        .landing-header img[hidden] { display: none; }
+
+        .landing-header h1 {
+            font-size: 28px;
+            color: ${headerColor};
+            font-family: ${headerFont};
+        }
+
+        .hero-section {
+            min-height: 400px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            ${document.getElementById('previewHero').style.backgroundImage ? `background-image: ${document.getElementById('previewHero').style.backgroundImage};` : `background-color: ${document.getElementById('previewHero').style.backgroundColor || '#3498db'};`}
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: ${heroColor};
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-family: ${heroFont};
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: ${heroColor};
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-family: ${heroFont};
+        }
+
+        .content-section {
+            padding: 60px 40px;
+            font-family: ${contentFont};
+            background-color: ${document.getElementById('bgColor').value};
+            ${document.getElementById('previewContent').style.backgroundImage ? `background-image: ${document.getElementById('previewContent').style.backgroundImage}; background-size: cover; background-position: center;` : ''}
+        }
+
+        .content-block {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .content-block.image-right {
+            flex-direction: row-reverse;
+        }
+
+        .content-block.image-left {
+            flex-direction: row;
+        }
+
+        .content-image {
+            flex: 0 0 300px;
+            max-width: 100%;
+        }
+
+        .content-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .content-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .content-text h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: ${contentColor};
+        }
+
+        .content-text p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: ${contentColor};
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer-section p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            background: #34495e;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #3498db;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content-block,
+            .content-block.image-left,
+            .content-block.image-right {
+                flex-direction: column;
+            }
+
+            .content-image {
+                flex: 1 1 100%;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="landing-header">
+        ${websiteLogoData ? `<img src="${websiteLogoData}" alt="Company logo">` : ''}
+        <h1>${document.getElementById('headerTitle').value}</h1>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h2 class="hero-title">${document.getElementById('heroTitle').value}</h2>
+            <p class="hero-subtitle">${document.getElementById('heroSubtitle').value}</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+${sectionsHTML}
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>${document.getElementById('footerCompany').value}</h4>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>${document.getElementById('footerPhone').value}</p>
+            </div>
+            <div class="footer-section">
+                <h4>Service Area</h4>
+                <p>${document.getElementById('footerArea').value}</p>
+            </div>
+        </div>
+        ${socialHTML}
+        <div class="footer-bottom">
+            <p>${document.getElementById('footerCopyright').textContent}</p>
+        </div>
+    </footer>
+</body>
+</html>`;
+
+            status.textContent = 'Signing in and checking credits...';
+            const { createGame, currentUser, signIn } = await import('./src/firebase.js?v=10');
+            if (!currentUser()) await signIn();
+            if (!pendingExportId) pendingExportId = crypto.randomUUID();
+            await createGame(title, '', pendingExportId, 'websiteMaker');
+            window.parent.dispatchEvent(new Event('credits-changed'));
+            status.textContent = '3 credits used. Downloading your website...';
+
+            // Create download
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'landing-page.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            pendingExportId = '';
+            status.textContent = 'Your HTML file was downloaded. 3 credits used.';
+            } catch (error) {
+                status.textContent = error.message || 'Export failed. Please try again.';
+            } finally {
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

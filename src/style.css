@@ -61,6 +61,8 @@ h1 em { color: #758252; font-style: normal; }
 
 .builder { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 39px; background: #fff; border: 1px solid #e7e8e2; border-radius: 20px; box-shadow: 0 20px 55px rgba(38, 48, 37, .055); }
 .checkers-builder { margin-top: 28px; }
+.website-maker-builder { margin-top: 28px; align-items: start; }
+.website-maker-frame { grid-column: 1 / -1; display: block; width: 100%; height: 780px; border: 5px solid #131a20; border-radius: 10px; background: #fff; }
 .game-preview.checkers-preview { height: 560px; }
 .game-preview.qr-maker-preview { height: 570px; }
 .step-label { display: flex; gap: 10px; align-items: center; color: #697267; font-size: 10px; font-weight: 500; letter-spacing: .11em; }

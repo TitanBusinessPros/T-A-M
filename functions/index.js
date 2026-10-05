@@ -18,6 +18,7 @@ const region = 'us-central1';
 const gameBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/space-game.html';
 const checkersBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/checkers-game.html';
 const qrMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/qr-maker.html';
+const websiteMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/website-maker.html';
 const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -164,6 +165,9 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   if (gameType === 'qrMaker' && (!website || logoPath)) {
     throw new HttpsError('invalid-argument', 'A valid company website is required for the QR maker.');
   }
+  if (gameType === 'websiteMaker' && logoPath) {
+    throw new HttpsError('invalid-argument', 'Website exports do not need a stored logo.');
+  }
   if (gameType === 'checkers' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
   }
@@ -196,6 +200,6 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
       gameType, title, logoPath, ...(website ? { website } : {}), createdAt: FieldValue.serverTimestamp(),
     });
   });
-  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameBaseUrl;
+  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameBaseUrl;
   return { gameId, gameUrl: `${baseUrl}?game=${gameId}` };
 });
