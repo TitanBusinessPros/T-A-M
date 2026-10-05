@@ -1,5 +1,5 @@
 const CACHE_PREFIX = `titan-app-maker-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE = `${CACHE_PREFIX}v3`;
+const CACHE = `${CACHE_PREFIX}v4`;
 const FILES = [
   './', './index.html', './space-game.html', './manifest.webmanifest',
   './src/style.css', './src/main.js', './src/firebase.js', './src/game-logo.js', './src/install.js',

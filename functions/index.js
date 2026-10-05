@@ -6,6 +6,7 @@ const { getAuth } = require('firebase-admin/auth');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const Stripe = require('stripe');
 const { creditsForSession } = require('./credits');
+const { emailKey, grantAmount, isAdmin, normalizeEmail } = require('./admin-credits');
 
 initializeApp();
 const db = getFirestore();
@@ -21,6 +22,23 @@ function googleUser(request) {
     throw new HttpsError('unauthenticated', 'Sign in with Google to use credits.');
   }
   return request.auth.uid;
+}
+
+async function claimPendingCredits(request) {
+  const email = request.auth.token.email_verified === true
+    ? normalizeEmail(request.auth.token.email) : null;
+  if (!email) return;
+  const pendingRef = db.doc(`pendingCreditGrants/${emailKey(email)}`);
+  const accountRef = db.doc(`creditAccounts/${request.auth.uid}`);
+  await db.runTransaction(async (transaction) => {
+    const pending = await transaction.get(pendingRef);
+    const credits = pending.data()?.credits;
+    if (!Number.isSafeInteger(credits) || credits <= 0) return;
+    transaction.set(accountRef, {
+      credits: FieldValue.increment(credits), updatedAt: FieldValue.serverTimestamp(),
+    }, { merge: true });
+    transaction.delete(pendingRef);
+  });
 }
 
 exports.stripeWebhook = onRequest(
@@ -82,11 +100,47 @@ exports.stripeWebhook = onRequest(
 
 exports.getCreditStatus = onCall({ region, maxInstances: 3 }, async (request) => {
   const uid = googleUser(request);
+  await claimPendingCredits(request);
   const account = await db.doc(`creditAccounts/${uid}`).get();
   const url = new URL(paymentLinkUrl);
   url.searchParams.set('client_reference_id', uid);
   const buyUrl = url.toString();
-  return { credits: account.data()?.credits || 0, buyUrl };
+  return { credits: account.data()?.credits || 0, buyUrl, isAdmin: isAdmin(request.auth.token) };
+});
+
+exports.grantCredits = onCall({ region, maxInstances: 3 }, async (request) => {
+  googleUser(request);
+  if (!isAdmin(request.auth.token)) {
+    throw new HttpsError('permission-denied', 'Only the admin account can grant credits.');
+  }
+  const email = normalizeEmail(request.data?.email);
+  const credits = grantAmount(request.data?.credits);
+  const requestId = request.data?.requestId;
+  if (!email || !credits || typeof requestId !== 'string' || !idPattern.test(requestId)) {
+    throw new HttpsError('invalid-argument', 'Enter a valid email and 1 to 100 whole credits.');
+  }
+
+  const grantRef = db.doc(`adminCreditGrants/${requestId}`);
+  const pendingRef = db.doc(`pendingCreditGrants/${emailKey(email)}`);
+  let result;
+  await db.runTransaction(async (transaction) => {
+    const existing = await transaction.get(grantRef);
+    if (existing.exists) {
+      if (existing.data().adminUid !== request.auth.uid) {
+        throw new HttpsError('already-exists', 'This grant request was already used.');
+      }
+      result = { email: existing.data().email, credits: existing.data().credits };
+      return;
+    }
+    transaction.create(grantRef, {
+      adminUid: request.auth.uid, email, credits, createdAt: FieldValue.serverTimestamp(),
+    });
+    transaction.set(pendingRef, {
+      credits: FieldValue.increment(credits), updatedAt: FieldValue.serverTimestamp(),
+    }, { merge: true });
+    result = { email, credits };
+  });
+  return result;
 });
 
 exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
@@ -100,6 +154,8 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   if (logoPath && !new RegExp(`^logos/${uid}/[0-9a-f-]{36}$`).test(logoPath)) {
     throw new HttpsError('invalid-argument', 'This logo does not belong to your account.');
   }
+
+  await claimPendingCredits(request);
 
   const accountRef = db.doc(`creditAccounts/${uid}`);
   const redemptionRef = db.doc(`creditRedemptions/${gameId}`);

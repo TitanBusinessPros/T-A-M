@@ -26,6 +26,12 @@ button { cursor: pointer; }
 .credits-card span, .credits-card small { color: var(--muted); }
 .buy-button { align-self: flex-start; padding: 11px 14px; border-radius: 7px; background: var(--green); color: var(--ink); font: 500 11px 'DM Mono', monospace; text-decoration: none; }
 .buy-button:hover { background: #b7e650; }
+.admin-card { margin: 0 0 22px; padding: 18px; border: 1px solid #cbdba8; border-radius: 10px; background: #f4f8ed; }
+.admin-card[hidden] { display: none; }
+.admin-card h3 { margin: 0 0 7px; font-size: 17px; }
+.admin-card > p { margin: 0 0 16px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.admin-card form label:not(:first-child) { margin-top: 14px; }
+.admin-card .grant-status { margin: 12px 0 0; min-height: 18px; color: #38521f; }
 .eyebrow, .step-label, .footer, .input-meta { font-family: 'DM Mono', monospace; }
 .offer-banner { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 5px 12px; margin-top: 20px; padding: 12px 18px; border-radius: 10px; background: var(--green); text-align: center; font-size: 13px; }
 .offer-banner strong { font-weight: 800; }

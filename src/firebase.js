@@ -23,6 +23,9 @@ export const signOutUser = () => signOut(auth);
 export async function getCreditStatus() {
   return (await httpsCallable(functions, 'getCreditStatus')()).data;
 }
+export async function grantCredits(email, credits, requestId) {
+  return (await httpsCallable(functions, 'grantCredits')({ email, credits, requestId })).data;
+}
 export async function createGame(title, logoPath, requestId) {
   return (await httpsCallable(functions, 'createGame')({ title, logoPath, requestId })).data;
 }
