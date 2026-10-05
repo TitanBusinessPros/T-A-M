@@ -1,9 +1,9 @@
 const CACHE_PREFIX = `titan-app-maker-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE = `${CACHE_PREFIX}v9`;
+const CACHE = `${CACHE_PREFIX}v10`;
 const FILES = [
-  './', './index.html', './admin.html', './terms.html', './privacy.html', './space-game.html', './checkers-game.html', './manifest.webmanifest',
-  './src/style.css', './src/main.js', './src/checkers-builder.js', './src/checkers-logo.js', './src/admin.js', './src/credit-balance.js', './src/firebase.js', './src/game-logo.js', './src/install.js',
-  './assets/titan-logo.png', './assets/galactic-drift.mp3',
+  './', './index.html', './admin.html', './terms.html', './privacy.html', './space-game.html', './checkers-game.html', './qr-maker.html', './manifest.webmanifest',
+  './src/style.css', './src/main.js', './src/checkers-builder.js', './src/checkers-logo.js', './src/qr-maker-builder.js', './src/qr-maker-brand.js', './src/admin.js', './src/credit-balance.js', './src/firebase.js', './src/game-logo.js', './src/install.js',
+  './assets/titan-logo.png', './assets/galactic-drift.mp3', './assets/qrcode.min.js',
   './assets/icons/favicon.ico', './assets/icons/favicon-96x96.png',
   './assets/icons/apple-touch-icon.png',
   './assets/icons/web-app-manifest-192x192.png',

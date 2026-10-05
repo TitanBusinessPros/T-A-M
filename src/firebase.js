@@ -26,8 +26,8 @@ export async function getCreditStatus() {
 export async function grantCredits(email, credits, requestId) {
   return (await httpsCallable(functions, 'grantCredits')({ email, credits, requestId })).data;
 }
-export async function createGame(title, logoPath, requestId, gameType = 'space') {
-  return (await httpsCallable(functions, 'createGame')({ title, logoPath, requestId, gameType })).data;
+export async function createGame(title, logoPath, requestId, gameType = 'space', website = '') {
+  return (await httpsCallable(functions, 'createGame')({ title, logoPath, requestId, gameType, website })).data;
 }
 export const MAX_LOGO_BYTES = 100 * 1024;
 const allowedLogoTypes = new Set(['image/png', 'image/jpeg', 'image/webp']);

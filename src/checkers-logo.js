@@ -1,4 +1,4 @@
-import { firebaseApp, getLogoURL } from './firebase.js?v=8';
+import { firebaseApp, getLogoURL } from './firebase.js?v=10';
 
 const gameId = new URLSearchParams(location.search).get('game');
 if (gameId) {

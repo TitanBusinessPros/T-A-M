@@ -8,6 +8,7 @@ const Stripe = require('stripe');
 const { creditsForSession } = require('./credits');
 const { emailKey, grantAmount, isAdmin, normalizeEmail } = require('./admin-credits');
 const { gameCost } = require('./game-pricing');
+const { normalizeWebsite } = require('./website');
 
 initializeApp();
 const db = getFirestore();
@@ -16,6 +17,7 @@ const webhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 const region = 'us-central1';
 const gameBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/space-game.html';
 const checkersBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/checkers-game.html';
+const qrMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/qr-maker.html';
 const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -155,8 +157,12 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const title = String(request.data?.title || '').trim();
   const logoPath = String(request.data?.logoPath || '');
   const gameId = String(request.data?.requestId || '');
-  if (!idPattern.test(gameId) || (gameType === 'space' && (!title || title.length > 48)) || (gameType === 'checkers' && title)) {
+  const website = gameType === 'qrMaker' ? normalizeWebsite(request.data?.website) : null;
+  if (!idPattern.test(gameId) || (gameType !== 'checkers' && (!title || title.length > 48)) || (gameType === 'checkers' && title)) {
     throw new HttpsError('invalid-argument', 'A valid game request is required.');
+  }
+  if (gameType === 'qrMaker' && (!website || logoPath)) {
+    throw new HttpsError('invalid-argument', 'A valid company website is required for the QR maker.');
   }
   if (gameType === 'checkers' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
@@ -186,7 +192,10 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
       credits: FieldValue.increment(-cost), updatedAt: FieldValue.serverTimestamp(),
     }, { merge: true });
     transaction.create(redemptionRef, { uid, gameId, gameType, cost, createdAt: FieldValue.serverTimestamp() });
-    transaction.create(gameRef, { gameType, title, logoPath, createdAt: FieldValue.serverTimestamp() });
+    transaction.create(gameRef, {
+      gameType, title, logoPath, ...(website ? { website } : {}), createdAt: FieldValue.serverTimestamp(),
+    });
   });
-  return { gameId, gameUrl: `${gameType === 'checkers' ? checkersBaseUrl : gameBaseUrl}?game=${gameId}` };
+  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameBaseUrl;
+  return { gameId, gameUrl: `${baseUrl}?game=${gameId}` };
 });

@@ -1,4 +1,4 @@
-import { currentUser, getCreditStatus } from './firebase.js?v=8';
+import { currentUser, getCreditStatus } from './firebase.js?v=10';
 
 export function setupCreditBalance({ onStatus, onError }) {
   const summary = document.querySelector('#accountSummary');

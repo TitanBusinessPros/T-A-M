@@ -65,7 +65,7 @@ form.addEventListener('submit', async (event) => {
   if (!file) return;
   try {
     validateLogo(file);
-    const { createGame, currentUser, signIn, uploadLogo } = await import('./firebase.js?v=8');
+    const { createGame, currentUser, signIn, uploadLogo } = await import('./firebase.js?v=10');
     shareCard.hidden = true;
     button.disabled = true;
     if (!currentUser()) await signIn();

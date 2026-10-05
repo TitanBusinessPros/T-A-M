@@ -1,4 +1,4 @@
-import { firebaseApp, getLogoURL } from './firebase.js?v=8';
+import { firebaseApp, getLogoURL } from './firebase.js?v=10';
 
 const params = new URLSearchParams(window.location.search);
 let logoPath = params.get('logo');

@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with a custom game and QR code from Titan App Maker." />
-    <title>Titan App Maker | Games</title>
-    <link rel="stylesheet" href="./src/style.css?v=9" />
+    <title>Titan App Maker | Games &amp; QR Tools</title>
+    <link rel="stylesheet" href="./src/style.css?v=10" />
   </head>
   <body>
     <div class="page-shell">
@@ -27,12 +27,12 @@
       </div>
 
       <main>
-        <div class="offer-banner"><strong>Apps under five bucks!</strong><span>Promote your business with these fun apps for less than a cup of coffee.</span></div>
+        <div class="offer-banner"><strong>Tools under five bucks!</strong><span>Promote your business with games and QR tools for less than a cup of coffee.</span></div>
         <section class="intro">
           <img class="titan-logo" src="./assets/titan-logo.png" alt="Titan Business Pros logo" width="180" height="180" />
           <p class="eyebrow">YOUR BUSINESS. YOUR APP.</p>
-          <h1>Put your name and<br />company logo in the <em>app!</em></h1>
-          <p class="intro-copy">Add your buisness name or logo to these apps then create a QR code people can scan to use your app.</p>
+          <h1>Put your business<br />in the <em>app!</em></h1>
+          <p class="intro-copy">Brand a game or QR tool with your company details, then share a link and QR code so people can use it.</p>
         </section>
 
         <section class="builder" aria-labelledby="builder-heading">
@@ -118,10 +118,45 @@
           <div class="qr-wrap"><div id="checkersQrTarget" role="img" aria-label="QR code for your Checkers game"></div><a id="checkersDownloadQr" class="download-link" download="checkers-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
         </section>
 
+        <section class="builder qr-maker-builder" aria-labelledby="qr-maker-heading">
+          <div class="builder-form">
+            <div class="step-label"><span>01</span> MAKE IT YOURS</div>
+            <h2 id="qr-maker-heading">QR Code &amp; Business Card Maker</h2>
+            <p class="form-copy">Create a branded tool for cool website QR codes and digital business cards. Your company name appears at the top, and “Contact Us” opens your website.</p>
+            <div class="credits-card"><strong>QR tool: 2 credits</strong><small>Creating your finished QR tool and its share code uses 2 credits. Your balance is shown above when signed in.</small></div>
+            <form id="qrMakerForm">
+              <label for="qrMakerCompany">Company name</label>
+              <input id="qrMakerCompany" name="companyName" type="text" maxlength="48" placeholder="Example: Acme Auto Repair" autocomplete="organization" required />
+              <div class="input-meta"><span>Shown across the top of your tool.</span><span id="qrMakerCharacterCount">0 / 48</span></div>
+              <label for="qrMakerWebsite">Company website for “Contact Us”</label>
+              <input id="qrMakerWebsite" name="website" type="text" inputmode="url" maxlength="512" placeholder="example.com" autocomplete="url" required />
+              <p class="logo-help" id="qrMakerStatus" role="status" aria-live="polite">The button and starting website QR update as you type.</p>
+              <button class="primary-button" id="qrMakerCreateButton" type="submit">MAKE MY QR TOOL <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your tool. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+          </div>
+          <div class="preview-column">
+            <div class="step-label"><span>02</span> LIVE PREVIEW</div>
+            <div class="game-preview qr-maker-preview"><iframe id="qrMakerPreview" src="./qr-maker.html?preview=1" title="Interactive QR code and business card maker preview"></iframe></div>
+            <p class="preview-caption">See your name and website here immediately. Try making a website QR code or a scan-to-save business card.</p>
+          </div>
+        </section>
+
+        <section class="share-card" id="qrMakerShareCard" hidden aria-live="polite" aria-labelledby="qrMakerShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="qrMakerShareHeading">Your QR tool is ready</h2>
+            <p>Share the link or scan the code so people can make QR codes and digital business cards.</p>
+            <div class="link-row"><input id="qrMakerLink" type="text" readonly aria-label="Your QR tool link" /><button id="qrMakerCopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="qrMakerOpenTool" class="open-game-link" target="_blank" rel="noopener">OPEN TOOL ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="qrMakerQrTarget" role="img" aria-label="QR code for your QR maker"></div><a id="qrMakerDownloadQr" class="download-link" download="qr-tool-share-code.png">DOWNLOAD SHARE CODE ↓</a></div>
+        </section>
+
         <section class="how-it-works" aria-label="How it works">
-          <div><span>1</span><p>Choose a game and add its name or logo</p></div>
-          <div><span>2</span><p>Use 1 credit for Space or 4 credits for Checkers to get a game link and QR code</p></div>
-          <div><span>3</span><p>Share it so people can play</p></div>
+          <div><span>1</span><p>Choose a game or QR tool and add your company details</p></div>
+          <div><span>2</span><p>Use 1 credit for Space, 2 for the QR tool, or 4 for Checkers</p></div>
+          <div><span>3</span><p>Share the link and code so people can use it</p></div>
         </section>
       </main>
 
@@ -145,7 +180,7 @@
     </dialog>
     <dialog id="creditPurchaseDialog" class="purchase-dialog" aria-labelledby="creditPurchaseTitle" aria-describedby="finalSaleNotice">
       <h2 id="creditPurchaseTitle">Buy 5 credits for $5</h2>
-      <p>Space games use 1 credit. Checkers games use 4 credits.</p>
+      <p>Space games use 1 credit, the QR tool uses 2, and Checkers games use 4.</p>
       <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
       <label class="purchase-consent" for="purchaseTerms">
         <input id="purchaseTerms" type="checkbox" />
@@ -156,8 +191,9 @@
     </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script defer src="./src/install.js?v=9"></script>
-    <script type="module" src="./src/main.js?v=9"></script>
-    <script type="module" src="./src/checkers-builder.js?v=8"></script>
+    <script defer src="./src/install.js?v=10"></script>
+    <script type="module" src="./src/main.js?v=10"></script>
+    <script type="module" src="./src/checkers-builder.js?v=10"></script>
+    <script type="module" src="./src/qr-maker-builder.js?v=10"></script>
   </body>
 </html>
