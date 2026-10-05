@@ -245,7 +245,10 @@
             margin-bottom: 1.5rem;
             position: relative;
             overflow: hidden;
+            max-width: 100%;
         }
+
+        #qrcode canvas { display: block; max-width: 100%; height: auto; }
         
         #qrcode::after {
             content: '';
@@ -378,6 +381,20 @@
                 linear-gradient(rgba(0, 247, 255, 0.3) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 247, 255, 0.3) 1px, transparent 1px);
             background-size: 20px 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 1rem; }
+            header { margin-bottom: 1.5rem; }
+            h1 { font-size: clamp(1.5rem, 7vw, 2rem); letter-spacing: 1px; }
+            .subtitle { font-size: 1rem; margin-bottom: 1rem; }
+            .main-content { gap: 1rem; }
+            .input-section, .qr-container { padding: 1rem; }
+            .tab { padding: .6rem .7rem; font-size: .9rem; }
+            .style-options { gap: .5rem; }
+            .style-option { padding: .5rem; font-size: .8rem; }
+            .qr-actions { flex-wrap: wrap; justify-content: center; }
+            #qrcode { padding: .5rem; }
         }
     </style>
 </head>
