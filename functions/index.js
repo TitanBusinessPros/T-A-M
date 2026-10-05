@@ -21,6 +21,7 @@ const qrMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/qr-maker.html'
 const websiteMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/website-maker.html';
 const chessBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/chess-game.html';
 const pinballBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/pinball-game.html';
+const invoiceGeneratorBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/invoice-generator.html';
 const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -160,8 +161,8 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const title = String(request.data?.title || '').trim();
   const logoPath = String(request.data?.logoPath || '');
   const gameId = String(request.data?.requestId || '');
-  const website = ['qrMaker', 'chess', 'pinball'].includes(gameType) ? normalizeWebsite(request.data?.website) : null;
-  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker', 'chess', 'pinball'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker', 'chess', 'pinball'].includes(gameType) && title)) {
+  const website = ['qrMaker', 'chess', 'pinball', 'invoiceGenerator'].includes(gameType) ? normalizeWebsite(request.data?.website) : null;
+  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker', 'chess', 'pinball', 'invoiceGenerator'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker', 'chess', 'pinball', 'invoiceGenerator'].includes(gameType) && title)) {
     throw new HttpsError('invalid-argument', 'A valid game request is required.');
   }
   if (gameType === 'qrMaker' && (!website || logoPath)) {
@@ -175,6 +176,9 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   }
   if (gameType === 'pinball' && (!logoPath || !website)) {
     throw new HttpsError('invalid-argument', 'A logo and website address are required for Pinball.');
+  }
+  if (gameType === 'invoiceGenerator' && (!logoPath || !website)) {
+    throw new HttpsError('invalid-argument', 'A logo and website address are required for the Invoice Generator.');
   }
   if (gameType === 'checkers' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
@@ -208,6 +212,6 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
       gameType, title, logoPath, ...(website ? { website } : {}), createdAt: FieldValue.serverTimestamp(),
     });
   });
-  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameType === 'chess' ? chessBaseUrl : gameType === 'pinball' ? pinballBaseUrl : gameBaseUrl;
+  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameType === 'chess' ? chessBaseUrl : gameType === 'pinball' ? pinballBaseUrl : gameType === 'invoiceGenerator' ? invoiceGeneratorBaseUrl : gameBaseUrl;
   return { gameId, gameUrl: `${baseUrl}?game=${gameId}` };
 });
