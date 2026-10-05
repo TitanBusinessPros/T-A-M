@@ -42,11 +42,13 @@ function resetResult() {
   status.classList.remove('error');
 }
 
-preview.addEventListener('load', () => {
+function initializePreview() {
   updatePreview();
-  preview.contentWindow?.showAdModal?.();
-});
-updatePreview();
+  if (!preview.contentDocument?.querySelector('#adModal.show')) preview.contentWindow?.showAdModal?.();
+}
+
+preview.addEventListener('load', initializePreview);
+if (preview.contentDocument?.readyState === 'complete') initializePreview();
 logoInput.addEventListener('change', () => {
   resetResult();
   if (previewUrl) URL.revokeObjectURL(previewUrl);
