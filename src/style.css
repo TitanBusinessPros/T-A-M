@@ -58,6 +58,15 @@ button { cursor: pointer; }
 h1 { margin: 0; font-size: clamp(38px, 5.5vw, 66px); line-height: 1.05; letter-spacing: -.065em; font-weight: 700; }
 h1 em { color: #758252; font-style: normal; }
 .intro-copy { max-width: 470px; margin: 22px auto 0; color: var(--muted); font-size: 16px; line-height: 1.65; }
+.learn-money-button { display: inline-block; max-width: 100%; margin-top: 22px; padding: 13px 20px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 700; line-height: 1.35; text-align: center; }
+.learn-money-button:hover, .learn-money-button:focus-visible { background: #354b34; }
+.learn-money-panel { max-width: 760px; margin: 24px auto 0; padding: 24px 28px; border: 1px solid #cbdba8; border-radius: 16px; background: #fff; text-align: left; box-shadow: 0 12px 32px rgba(38, 48, 37, .06); }
+.learn-money-panel[hidden] { display: none; }
+.learn-money-panel h2 { margin: 0 0 10px; font-size: 23px; }
+.learn-money-panel p, .learn-money-panel li { color: #4f5b53; font-size: 14px; line-height: 1.6; }
+.learn-money-panel p { margin: 0; }
+.learn-money-panel ul { margin: 16px 0 0; padding-left: 21px; }
+.learn-money-panel li + li { margin-top: 9px; }
 
 .builder { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 39px; background: #fff; border: 1px solid #e7e8e2; border-radius: 20px; box-shadow: 0 20px 55px rgba(38, 48, 37, .055); }
 .checkers-builder { margin-top: 28px; }
