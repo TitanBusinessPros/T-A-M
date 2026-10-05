@@ -66,6 +66,9 @@
         .preview .sponsor-logo { min-height: 50px; padding: 4px; font-size: 15px; }
         .preview .sponsor-logo img { max-height: 70px; }
         .preview .sponsor-label { font-size: 12px; }
+        .preview .game-legal { display: none; }
+        .game-legal { display: flex; justify-content: center; gap: 18px; font-size: 11px; }
+        .game-legal a { color: #b7ffbd; text-underline-offset: 3px; }
         .preview .start-copy h1 { font-size: clamp(18px, 5vw, 25px); }
         .preview .start-copy p { margin-top: 5px; }
         .preview .start-copy .game-meta, .preview .start-copy .controls { font-size: 12px; }
@@ -261,6 +264,7 @@
             <p class="controls controls-desktop">WASD to move | Mouse to aim and fire</p>
         </div>
         <button id="startButton" type="button">TAP TO START</button>
+        <nav class="game-legal" aria-label="Legal"><a href="./terms.html" target="_blank" rel="noopener">Terms</a><a href="./privacy.html" target="_blank" rel="noopener">Privacy Policy</a></nav>
     </div>
     <div id="gameTitle" class="hidden">Your business name goes here</div>
     <div id="levelTransition"></div>

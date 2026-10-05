@@ -33,6 +33,10 @@ button { cursor: pointer; }
 .credits-card span, .credits-card small { color: var(--muted); }
 .buy-button { align-self: flex-start; padding: 11px 14px; border-radius: 7px; background: var(--green); color: var(--ink); font: 500 11px 'DM Mono', monospace; text-decoration: none; }
 .buy-button:hover { background: #b7e650; }
+.final-sale-notice { margin: 3px 0 0; color: #6d3026; font-size: 12px; font-weight: 700; line-height: 1.45; }
+.purchase-consent { display: flex; align-items: flex-start; gap: 9px; margin: 2px 0 4px; color: var(--ink); font-size: 11px; line-height: 1.5; }
+.purchase-consent input { width: 16px; height: 16px; flex: 0 0 auto; margin: 1px 0 0; accent-color: #526a35; }
+.purchase-consent a, .fine-print a, .footer-links a, .legal-page a { color: #465537; text-underline-offset: 3px; }
 .admin-link { align-self: flex-start; color: #465537; font: 500 11px 'DM Mono', monospace; text-decoration: underline; text-underline-offset: 3px; }
 .admin-link[hidden] { display: none; }
 .admin-page { width: min(100%, 620px); margin: 68px auto 90px; }
@@ -99,7 +103,15 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 .how-it-works > div { display: flex; align-items: center; gap: 12px; color: #5f685e; }
 .how-it-works span { display: grid; place-items: center; width: 25px; height: 25px; flex: 0 0 auto; border-radius: 50%; background: #e8ecdF; color: #627348; font-family: 'DM Mono', monospace; font-size: 10px; }
 .how-it-works p { margin: 0; font-size: 12px; }
-.footer { display: flex; justify-content: space-between; padding: 17px 0 24px; border-top: 1px solid var(--line); color: #889087; font-size: 9px; letter-spacing: .08em; }
+.footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px 18px; padding: 17px 0 24px; border-top: 1px solid var(--line); color: #889087; font-size: 9px; letter-spacing: .08em; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.legal-page { max-width: 780px; margin: 54px auto 76px; }
+.legal-page h1 { font-size: clamp(38px, 5vw, 56px); }
+.legal-page h2 { margin: 34px 0 10px; font-size: 23px; }
+.legal-page p, .legal-page li { color: #4f5b53; font-size: 15px; line-height: 1.75; }
+.legal-page ul { padding-left: 23px; }
+.legal-page .legal-date { margin: 9px 0 25px; color: var(--muted); font-size: 12px; }
+.legal-page .legal-callout { padding: 17px 20px; border: 1px solid #cbdba8; border-radius: 10px; background: #f4f8ed; line-height: 1.6; }
 .toast { position: fixed; z-index: 10; bottom: 22px; left: 50%; max-width: calc(100vw - 32px); padding: 11px 16px; border-radius: 8px; background: #19221c; color: #fff; font-size: 12px; text-align: center; opacity: 0; pointer-events: none; transform: translate(-50%, 8px); transition: opacity .2s, transform .2s; }
 .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 #noLogoWarning { width: min(420px, calc(100% - 32px)); padding: 24px; border: 1px solid #d7dbd2; border-radius: 12px; color: var(--ink); font: inherit; box-shadow: 0 20px 60px rgba(0, 0, 0, .22); }

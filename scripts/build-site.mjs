@@ -9,7 +9,7 @@ if (dirname(output) !== projectRoot) throw new Error('Unexpected output director
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output);
 
-for (const file of ['index.html', 'admin.html', 'space-game.html', 'manifest.webmanifest', 'sw.js']) {
+for (const file of ['index.html', 'admin.html', 'terms.html', 'privacy.html', 'space-game.html', 'manifest.webmanifest', 'sw.js']) {
   copyFileSync(join(projectRoot, file), join(output, file));
 }
 for (const directory of ['assets', 'src']) {
