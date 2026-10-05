@@ -271,6 +271,9 @@
             justify-content: center;
         }
 
+        .action-buttons button:disabled { background: #6c757d; cursor: not-allowed; opacity: .65; transform: none; box-shadow: none; }
+        .export-status { color: #555; font-size: 14px; font-weight: 700; text-align: center; }
+
         .github-tip { text-align: center; font-size: 16px; font-weight: 700; line-height: 1.5; }
 
         .btn-secondary {
@@ -512,7 +515,8 @@
 
                 <div class="action-buttons">
                     <p class="github-tip">Check out GitHub to put your websites up for free!</p>
-                    <button id="exportBtn" class="btn-success"><i class="fas fa-download"></i> Export Website</button>
+                    <button id="exportBtn" class="btn-success" disabled><i class="fas fa-download"></i> Export Website</button>
+                    <p id="exportStatus" class="export-status" role="status">Enabled After Purchase Only</p>
                 </div>
             </div>
         </div>
@@ -750,6 +754,7 @@
             }
 
             function showExportModal() {
+                if (exportBtn.disabled) return;
                 exportModal.style.display = 'flex';
 
                 // Generate the HTML code for the website
@@ -880,6 +885,6 @@
 
         });
     </script>
-    <script type="module" src="./src/website-photo-builder-brand.js?v=1"></script>
+    <script type="module" src="./src/website-photo-builder-brand.js?v=2"></script>
 </body>
 </html>

@@ -17,7 +17,8 @@ function setPhotoBuilderBrand(logoSrc = '', website = '') {
 
 window.setPhotoBuilderBrand = setPhotoBuilderBrand;
 
-const gameId = new URLSearchParams(location.search).get('game');
+const params = new URLSearchParams(location.search);
+const gameId = params.get('game');
 if (gameId) {
   const slot = document.querySelector('#photoBuilderLogoBox');
   const link = document.querySelector('#photoBuilderWebsite');
@@ -34,6 +35,10 @@ if (gameId) {
     setPhotoBuilderBrand('', website.toString());
     slot.textContent = 'Logo loading...';
     document.documentElement.classList.remove('brand-loading');
+    if (!params.has('preview')) {
+      document.querySelector('#exportBtn').disabled = false;
+      document.querySelector('#exportStatus').textContent = '';
+    }
     const logoUrl = await getLogoURL(tool.data().logoPath);
     await new Promise((resolve, reject) => {
       const image = new Image();

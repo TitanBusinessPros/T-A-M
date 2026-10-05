@@ -3,7 +3,7 @@ const gameId = params.get('game');
 const exportButton = document.querySelector('#exportButton');
 
 if (params.has('preview')) {
-  document.querySelector('#exportStatus').textContent = 'Export is available in your finished, shared tool.';
+  document.querySelector('#exportStatus').textContent = 'Enabled After Purchase Only';
 } else if (!gameId) {
   document.querySelector('#exportStatus').textContent = 'Open a branded Website Maker link to export a website.';
 }
@@ -18,13 +18,16 @@ if (gameId) {
     if (!tool.exists() || tool.data().gameType !== 'websiteMaker') throw new Error('This Website Maker could not be found.');
     const { logoPath } = tool.data();
     if (!logoPath) throw new Error('Invalid Website Maker details.');
+    if (!params.has('preview')) {
+      exportButton.disabled = false;
+      document.querySelector('#exportStatus').textContent = '';
+    }
     const logoUrl = await getLogoURL(logoPath);
     const image = new Image();
     image.alt = 'Business logo';
     image.onload = () => logoSlot.replaceChildren(image);
     image.onerror = () => { logoSlot.textContent = 'Logo unavailable'; };
     image.src = logoUrl;
-    if (!params.has('preview')) exportButton.disabled = false;
   } catch (error) {
     logoSlot.textContent = 'Logo unavailable';
     console.error(error);
