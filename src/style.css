@@ -31,8 +31,9 @@ button { cursor: pointer; }
 .account-summary button { min-height: 35px; }
 .credits-card { display: flex; flex-direction: column; gap: 8px; margin: 0 0 22px; padding: 16px; border: 1px solid #dce4cf; border-radius: 10px; background: #f4f8ed; font-size: 13px; }
 .credits-card span, .credits-card small { color: var(--muted); }
-.buy-button { align-self: flex-start; padding: 11px 14px; border-radius: 7px; background: var(--green); color: var(--ink); font: 500 11px 'DM Mono', monospace; text-decoration: none; }
+.buy-button { align-self: flex-start; padding: 11px 14px; border: 0; border-radius: 7px; background: var(--green); color: var(--ink); font: 500 11px 'DM Mono', monospace; text-decoration: none; cursor: pointer; }
 .buy-button:hover { background: #b7e650; }
+.buy-button:disabled { opacity: .65; cursor: wait; }
 .final-sale-notice { margin: 3px 0 0; color: #6d3026; font-size: 12px; font-weight: 700; line-height: 1.45; }
 .purchase-consent { display: flex; align-items: flex-start; gap: 9px; margin: 2px 0 4px; color: var(--ink); font-size: 11px; line-height: 1.5; }
 .purchase-consent input { width: 16px; height: 16px; flex: 0 0 auto; margin: 1px 0 0; accent-color: #526a35; }
@@ -105,8 +106,11 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 .how-it-works > div { display: flex; align-items: center; gap: 12px; color: #5f685e; }
 .how-it-works span { display: grid; place-items: center; width: 25px; height: 25px; flex: 0 0 auto; border-radius: 50%; background: #e8ecdF; color: #627348; font-family: 'DM Mono', monospace; font-size: 10px; }
 .how-it-works p { margin: 0; font-size: 12px; }
-.footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px 18px; padding: 17px 0 24px; border-top: 1px solid var(--line); color: #889087; font-size: 9px; letter-spacing: .08em; }
-.footer-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.footer { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 24px 12px 30px; border-top: 1px solid var(--line); color: #68716b; font-size: 12px; line-height: 1.5; text-align: center; }
+.footer strong { color: var(--ink); font-size: 13px; }
+.footer a { color: #465537; text-underline-offset: 3px; }
+.footer-contact, .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 11px; }
+.footer-links { margin-top: 5px; }
 .legal-page { max-width: 780px; margin: 54px auto 76px; }
 .legal-page h1 { font-size: clamp(38px, 5vw, 56px); }
 .legal-page h2 { margin: 34px 0 10px; font-size: 23px; }
@@ -120,6 +124,15 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 #noLogoWarning::backdrop { background: rgba(0, 0, 0, .55); }
 #noLogoWarning h2 { margin: 0 0 12px; }
 #noLogoWarning p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.purchase-dialog { width: min(440px, calc(100% - 32px)); padding: 25px; border: 1px solid #d7dbd2; border-radius: 12px; color: var(--ink); font: inherit; box-shadow: 0 20px 60px rgba(0, 0, 0, .22); }
+.purchase-dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.purchase-dialog h2 { margin: 0 0 10px; font-size: 24px; }
+.purchase-dialog > p { margin: 0 0 16px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.purchase-dialog .final-sale-notice { color: #6d3026; }
+.purchase-dialog .purchase-consent { margin: 18px 0 0; font-size: 12px; }
+.purchase-dialog .purchase-status { min-height: 18px; margin: 10px 0 0; color: #8a2e20; font-size: 12px; }
+.purchase-actions { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.purchase-actions .secondary-button { min-height: 39px; }
 .warning-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
 .warning-actions button { min-height: 40px; padding: 0 14px; border: 1px solid #cbd3c1; border-radius: 8px; background: #fff; color: var(--ink); font-family: 'DM Mono', monospace; font-size: 11px; }
 .warning-actions #continueNoLogo { border-color: var(--green); background: var(--green); }
@@ -145,5 +158,5 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
   h2 { font-size: 23px; }
   .link-row { flex-direction: column; }
   .secondary-button { min-height: 42px; }
-  .footer { font-size: 8px; }
+  .footer { font-size: 11px; }
 }

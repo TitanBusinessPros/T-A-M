@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with a custom game and QR code from Titan App Maker." />
     <title>Titan App Maker | Games</title>
-    <link rel="stylesheet" href="./src/style.css?v=8" />
+    <link rel="stylesheet" href="./src/style.css?v=9" />
   </head>
   <body>
     <div class="page-shell">
@@ -44,12 +44,7 @@
               <strong>Space game: 1 credit</strong>
               <span id="creditBalance">Sign in to see your credits.</span>
               <small>$5 buys 5 credits. Each finished Space game and QR code uses 1 credit.</small>
-              <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
-              <label class="purchase-consent" for="purchaseTerms">
-                <input id="purchaseTerms" type="checkbox" />
-                <span>I agree to the <a href="./terms.html" target="_blank" rel="noopener">Terms</a> and acknowledge the <a href="./privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, including the no-refund policy.</span>
-              </label>
-              <a id="buyCredits" class="buy-button" href="#buy-credits" aria-describedby="finalSaleNotice">BUY CREDITS FOR ONLY $5</a>
+              <button id="buyCredits" class="buy-button" type="button" aria-haspopup="dialog" aria-controls="creditPurchaseDialog">BUY CREDITS FOR ONLY $5</button>
               <a id="adminLink" class="admin-link" href="./admin.html" hidden>GRANT CREDITS</a>
             </div>
 
@@ -130,7 +125,14 @@
         </section>
       </main>
 
-      <footer class="footer"><span>Titan App Maker</span><nav class="footer-links" aria-label="Legal"><a href="./terms.html">Terms</a><a href="./privacy.html">Privacy Policy</a></nav><span>SPACE GAME · CHECKERS GAME</span></footer>
+      <footer class="footer">
+        <strong>Titan Business Pros LLC</strong>
+        <div class="footer-contact"><a href="tel:+14059987979">405-998-7979</a><span aria-hidden="true">|</span><a href="mailto:titanbusinesspros@gmail.com">titanbusinesspros@gmail.com</a></div>
+        <a href="https://www.oklahoma.marketing/" target="_blank" rel="noopener">www.oklahoma.marketing</a>
+        <span>Oklahoma City, OK</span>
+        <span>© 2026 Titan Business Pros LLC. All rights reserved.</span>
+        <nav class="footer-links" aria-label="Legal"><a href="./terms.html">Terms</a><a href="./privacy.html">Privacy Policy</a></nav>
+      </footer>
     </div>
     <dialog id="noLogoWarning" aria-labelledby="noLogoWarningTitle">
       <h2 id="noLogoWarningTitle">No logo added</h2>
@@ -141,10 +143,21 @@
         <button id="continueNoLogo" type="button">CONTINUE</button>
       </div>
     </dialog>
+    <dialog id="creditPurchaseDialog" class="purchase-dialog" aria-labelledby="creditPurchaseTitle" aria-describedby="finalSaleNotice">
+      <h2 id="creditPurchaseTitle">Buy 5 credits for $5</h2>
+      <p>Space games use 1 credit. Checkers games use 4 credits.</p>
+      <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
+      <label class="purchase-consent" for="purchaseTerms">
+        <input id="purchaseTerms" type="checkbox" />
+        <span>I agree to the <a href="./terms.html" target="_blank" rel="noopener">Terms</a> and acknowledge the <a href="./privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, including the no-refund policy.</span>
+      </label>
+      <p id="purchaseStatus" class="purchase-status" role="status" aria-live="polite"></p>
+      <div class="purchase-actions"><button id="cancelCreditPurchase" class="secondary-button" type="button">CANCEL</button><button id="confirmCreditPurchase" class="buy-button" type="button">CONTINUE TO CHECKOUT</button></div>
+    </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script defer src="./src/install.js?v=7"></script>
-    <script type="module" src="./src/main.js?v=8"></script>
+    <script defer src="./src/install.js?v=9"></script>
+    <script type="module" src="./src/main.js?v=9"></script>
     <script type="module" src="./src/checkers-builder.js?v=8"></script>
   </body>
 </html>

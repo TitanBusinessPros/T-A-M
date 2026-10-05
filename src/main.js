@@ -21,6 +21,10 @@ const cancelNoLogo = document.querySelector('#cancelNoLogo');
 const continueNoLogo = document.querySelector('#continueNoLogo');
 const authButton = document.querySelector('#authButton');
 const buyCredits = document.querySelector('#buyCredits');
+const creditPurchaseDialog = document.querySelector('#creditPurchaseDialog');
+const confirmCreditPurchase = document.querySelector('#confirmCreditPurchase');
+const cancelCreditPurchase = document.querySelector('#cancelCreditPurchase');
+const purchaseStatus = document.querySelector('#purchaseStatus');
 const purchaseTerms = document.querySelector('#purchaseTerms');
 const creditBalance = document.querySelector('#creditBalance');
 const adminLink = document.querySelector('#adminLink');
@@ -63,20 +67,33 @@ authButton.addEventListener('click', async () => {
   }
 });
 
-buyCredits.addEventListener('click', async (event) => {
-  event.preventDefault();
+buyCredits.addEventListener('click', () => {
+  purchaseTerms.checked = false;
+  purchaseStatus.textContent = '';
+  creditPurchaseDialog.showModal();
+});
+
+cancelCreditPurchase.addEventListener('click', () => creditPurchaseDialog.close());
+
+confirmCreditPurchase.addEventListener('click', async () => {
   if (!purchaseTerms.checked) {
     purchaseTerms.focus();
-    showToast('Please agree to the Terms and no-refund policy before buying credits.');
+    purchaseStatus.textContent = 'Please agree to the Terms and no-refund policy before buying credits.';
     return;
   }
   try {
+    confirmCreditPurchase.disabled = true;
+    confirmCreditPurchase.textContent = 'OPENING CHECKOUT...';
+    purchaseStatus.textContent = '';
     if (!currentUser()) await signIn();
     const { buyUrl } = await getCreditStatus();
     if (!buyUrl) throw new Error('Payment link is not ready.');
     window.location.assign(buyUrl);
   } catch (error) {
-    showToast(error.message || 'Could not open checkout.');
+    purchaseStatus.textContent = error.message || 'Could not open checkout.';
+  } finally {
+    confirmCreditPurchase.disabled = false;
+    confirmCreditPurchase.textContent = 'CONTINUE TO CHECKOUT';
   }
 });
 
