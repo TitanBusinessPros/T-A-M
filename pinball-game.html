@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Neon Laser Pinball</title>
+  <script>
+    if (new URLSearchParams(location.search).has('game')) document.documentElement.classList.add('brand-loading');
+  </script>
+  <link rel="icon" type="image/x-icon" href="https://github.com/TitanBusinessPros/Neon-Pinball/raw/main/Neon%20Pinball%20Favicon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: #000;
+      font-family: 'Courier New', monospace;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      overscroll-behavior: none;
+    }
+
+    html {
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+    }
+
+    #gameCanvas {
+      display: block;
+      background: radial-gradient(circle at 50% 50%, #1a0033, #000);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #ui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+      font-size: 16px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    #levelDisplay {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ff00ff;
+      text-shadow: 0 0 15px #ff00ff;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    #controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    /* Mobile touch controls */
+    #mobileControls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      display: none;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .flipper-btn {
+      position: fixed;
+      bottom: 20px;
+      width: 35%;
+      max-width: 200px;
+      height: 120px;
+      background: linear-gradient(45deg, rgba(255, 0, 255, 0.8), rgba(0, 255, 255, 0.8));
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #000;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: all;
+      touch-action: none;
+      z-index: 100;
+    }
+
+    #mobileLeftFlipper {
+      left: 10px;
+    }
+
+    #mobileRightFlipper {
+      right: 10px;
+    }
+
+    .flipper-btn:active {
+      background: linear-gradient(45deg, rgba(255, 0, 255, 1), rgba(0, 255, 255, 1));
+      transform: scale(0.95);
+    }
+
+    #mobileLaunchBtn {
+      position: fixed;
+      bottom: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(45deg, #ff00ff, #00ffff);
+      border: 3px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #000;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 101;
+      pointer-events: all;
+      touch-action: none;
+    }
+
+    #mobileLaunchBtn:active {
+      transform: translateX(-50%) scale(0.9);
+    }
+
+    button {
+      background: linear-gradient(45deg, #ff00ff, #00ffff);
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      text-shadow: 0 0 5px #000;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+      transition: all 0.3s;
+      touch-action: manipulation;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 1);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #restartBtn {
+      background: linear-gradient(45deg, #ff0000, #ff8800);
+    }
+
+    #logo {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 250px;
+      max-height: 80px;
+      z-index: 10;
+      filter: drop-shadow(0 0 15px #0ff) drop-shadow(0 0 30px #ff00ff);
+    }
+
+    #musicToggle {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: linear-gradient(45deg, #00ff00, #00cc00);
+      z-index: 10;
+      padding: 8px 12px;
+      font-size: 11px;
+    }
+
+    #audioStatus {
+      position: absolute;
+      bottom: 50px;
+      left: 10px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+      font-size: 11px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    #winMessage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      border: 3px solid #0ff;
+      padding: 40px;
+      border-radius: 20px;
+      color: #0ff;
+      text-shadow: 0 0 20px #0ff;
+      font-size: 32px;
+      font-weight: bold;
+      display: none;
+      z-index: 100;
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.8);
+    }
+
+    #gameOverModal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #gameOverModal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      text-align: center;
+      color: #0ff;
+      text-shadow: 0 0 20px #0ff;
+      padding: 20px;
+      max-width: 90%;
+    }
+
+    .modal-content h2 {
+      font-size: 36px;
+      margin-bottom: 15px;
+      color: #ff00ff;
+      text-shadow: 0 0 30px #ff00ff;
+    }
+
+    .modal-content p {
+      font-size: 20px;
+      margin: 8px 0;
+    }
+
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .modal-buttons button {
+      font-size: 16px;
+      padding: 12px 24px;
+    }
+
+    #adModal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.98);
+      display: none;
+      z-index: 300;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #adModal.show {
+      display: flex;
+    }
+
+    #sponsorHeading {
+      color: #fff;
+      font-size: clamp(20px, 4vw, 30px);
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    #sponsorLogo {
+      max-width: 90%;
+      max-height: 45%;
+      width: auto;
+      object-fit: contain;
+      border: 3px solid #0ff;
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.8);
+    }
+
+    #sponsorLogo[hidden], #sponsorLogoPlaceholder[hidden] { display: none; }
+    #sponsorLogoPlaceholder { color: #fff; font-size: 20px; font-weight: bold; }
+    #sponsorWebsite { color: #0ff; font-size: 17px; font-weight: bold; margin-top: 16px; max-width: 90%; text-align: center; overflow-wrap: anywhere; }
+    .brand-loading #sponsorLogoPlaceholder, .brand-loading #sponsorWebsite { visibility: hidden; }
+
+    #adSkipBtn {
+      margin-top: 15px;
+      display: none;
+      background: linear-gradient(45deg, #00ff00, #00cc00);
+      padding: 12px 30px;
+      font-size: 16px;
+    }
+
+    #adTimer {
+      color: #fff;
+      font-size: 18px;
+      margin-top: 15px;
+      text-shadow: 0 0 10px #fff;
+    }
+
+    /* Tablet and Mobile Responsive */
+    @media screen and (max-width: 1024px) {
+      #controls {
+        display: none;
+      }
+
+      #mobileControls {
+        display: block;
+      }
+
+      #ui {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+
+      #levelDisplay {
+        font-size: 16px;
+        padding: 6px 12px;
+      }
+
+      .modal-content h2 {
+        font-size: 28px;
+      }
+
+      .modal-content p {
+        font-size: 16px;
+      }
+
+      .modal-buttons button {
+        font-size: 14px;
+        padding: 10px 20px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      #ui {
+        font-size: 11px;
+        padding: 4px 8px;
+        top: 5px;
+        left: 5px;
+      }
+
+      #levelDisplay {
+        font-size: 13px;
+        padding: 4px 8px;
+        top: 5px;
+      }
+
+      #musicToggle, #audioStatus {
+        font-size: 9px;
+        padding: 5px 8px;
+      }
+
+      .flipper-btn {
+        width: 40%;
+        max-width: 150px;
+        height: 100px;
+        font-size: 15px;
+        bottom: 10px;
+      }
+
+      #mobileLeftFlipper {
+        left: 5px;
+      }
+
+      #mobileRightFlipper {
+        right: 5px;
+      }
+
+      #mobileLaunchBtn {
+        width: 80px;
+        height: 80px;
+        font-size: 12px;
+        bottom: 120px;
+      }
+
+      .modal-content h2 {
+        font-size: 24px;
+      }
+
+      .modal-content p {
+        font-size: 14px;
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .modal-buttons button {
+        font-size: 13px;
+        padding: 10px 15px;
+        width: 100%;
+        max-width: 250px;
+      }
+
+      #sponsorLogo {
+        max-height: 50%;
+      }
+    }
+
+    .levelup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 0, 255, 0.9);
+      border: 3px solid #ff00ff;
+      padding: 30px 50px;
+      border-radius: 20px;
+      color: #fff;
+      text-shadow: 0 0 20px #ff00ff;
+      font-size: 28px;
+      font-weight: bold;
+      z-index: 100;
+      box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <div>SCORE: <span id="score">0</span></div>
+    <div>BALLS: <span id="ballsLeft">10</span></div>
+    <div>ACTIVE: <span id="activeBalls">0</span>/3</div>
+    <div>POWER: <span id="power">0</span>%</div>
+  </div>
+
+  <div id="levelDisplay">LEVEL <span id="currentLevel">1</span> / 10</div>
+
+  <div id="winMessage">🏆 YOU WIN! 🏆<br>ALL 10 LEVELS COMPLETE!</div>
+
+  <div id="gameOverModal">
+    <div class="modal-content">
+      <h2>OUT OF BALLS!</h2>
+      <p>Score: <span id="finalScore">0</span></p>
+      <p>Level: <span id="finalLevel">1</span></p>
+      <div class="modal-buttons">
+        <button id="watchAdBtn">📺 WATCH AD<br>+10 BALLS</button>
+        <button id="restartFromOverBtn">🔄 RESTART GAME</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adModal">
+    <p id="sponsorHeading">This game is sponsored by</p>
+    <img id="sponsorLogo" alt="Sponsor logo" hidden>
+    <p id="sponsorLogoPlaceholder">Your logo goes here</p>
+    <a id="sponsorWebsite" href="#" target="_blank" rel="noopener" aria-disabled="true">Your website appears here</a>
+    <div id="adTimer">Watch ad to continue...</div>
+    <button id="adSkipBtn">✓ CLAIM 10 BALLS</button>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div id="audioStatus">Music: Loading...</div>
+  <button id="musicToggle">🔊 TOGGLE MUSIC</button>
+
+  <div id="controls">
+    <button id="leftFlipper">LEFT FLIPPER (A)</button>
+    <button id="launchBtn">LAUNCH (SPACE)</button>
+    <button id="rightFlipper">RIGHT FLIPPER (D)</button>
+    <button id="restartBtn">RESTART (R)</button>
+    <button id="clearSaveBtn">CLEAR SAVE</button>
+  </div>
+
+  <!-- Mobile Touch Controls -->
+  <div id="mobileControls">
+    <div id="mobileLeftFlipper" class="flipper-btn">LEFT<br>FLIPPER</div>
+    <div id="mobileRightFlipper" class="flipper-btn">RIGHT<br>FLIPPER</div>
+  </div>
+
+  <button id="mobileLaunchBtn">LAUNCH</button>
+
+  <audio id="backgroundMusic" loop>
+    <source src="https://github.com/TitanBusinessPros/Neon-Pinball/raw/main/Neon%20Pinball%20Theme%20Song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas to full viewport size
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+
+    resizeCanvas();
+
+    // Audio elements
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    const musicToggle = document.getElementById('musicToggle');
+    const audioStatus = document.getElementById('audioStatus');
+
+    // Game state
+    const game = {
+      score: 0,
+      ballsLeft: 10,
+      launchPower: 0,
+      isCharging: false,
+      gameActive: false,
+      ball: null,
+      musicStarted: false,
+      currentLevel: 1,
+      maxLevel: 10,
+      levelThresholds: [5000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1280000, 2560000],
+      activeBalls: [] // Track multiple balls
+    };
+
+    // Load saved game from localStorage
+    function loadGame() {
+      try {
+        const saved = localStorage.getItem('neonPinballSave');
+        if (saved) {
+          const data = JSON.parse(saved);
+          game.score = data.score || 0;
+          game.ballsLeft = data.ballsLeft || 10;
+          game.currentLevel = data.currentLevel || 1;
+          console.log('Game loaded from save');
+        }
+      } catch (e) {
+        console.error('Error loading game:', e);
+      }
+    }
+
+    // Save game to localStorage
+    function saveGame() {
+      try {
+        const saveData = {
+          score: game.score,
+          ballsLeft: game.ballsLeft,
+          currentLevel: game.currentLevel,
+          timestamp: Date.now()
+        };
+        localStorage.setItem('neonPinballSave', JSON.stringify(saveData));
+      } catch (e) {
+        console.error('Error saving game:', e);
+      }
+    }
+
+    // Auto-save every 5 seconds
+    setInterval(saveGame, 5000);
+
+    // Color cycling based on level
+    const levelColors = [
+      { wall: '#0ff', bumper1: '#ff00ff', bumper2: '#00ffff', bumper3: '#ffff00', bumper4: '#ff0080', bumper5: '#00ff80' }, // Level 1
+      { wall: '#ff0080', bumper1: '#00ff00', bumper2: '#ff6600', bumper3: '#0080ff', bumper4: '#ff00ff', bumper5: '#ffff00' }, // Level 2
+      { wall: '#00ff00', bumper1: '#ff0000', bumper2: '#0000ff', bumper3: '#ff00ff', bumper4: '#00ffff', bumper5: '#ffff00' }, // Level 3
+      { wall: '#ffff00', bumper1: '#ff0080', bumper2: '#8000ff', bumper3: '#00ff80', bumper4: '#ff6600', bumper5: '#0080ff' }, // Level 4
+      { wall: '#ff6600', bumper1: '#0080ff', bumper2: '#ff00ff', bumper3: '#00ff00', bumper4: '#ffff00', bumper5: '#ff0080' }, // Level 5
+      { wall: '#8000ff', bumper1: '#00ffff', bumper2: '#ff6600', bumper3: '#00ff80', bumper4: '#ff00ff', bumper5: '#ffff00' }, // Level 6
+      { wall: '#00ffff', bumper1: '#ff0000', bumper2: '#00ff00', bumper3: '#0000ff', bumper4: '#ffff00', bumper5: '#ff00ff' }, // Level 7
+      { wall: '#ff00ff', bumper1: '#00ff80', bumper2: '#ff0080', bumper3: '#0080ff', bumper4: '#ffff00', bumper5: '#00ffff' }, // Level 8
+      { wall: '#00ff80', bumper1: '#ff6600', bumper2: '#8000ff', bumper3: '#00ffff', bumper4: '#ff00ff', bumper5: '#ffff00' }, // Level 9
+      { wall: '#ff0000', bumper1: '#00ff00', bumper2: '#0000ff', bumper3: '#ffff00', bumper4: '#ff00ff', bumper5: '#00ffff' }  // Level 10
+    ];
+
+    function getCurrentColors() {
+      return levelColors[game.currentLevel - 1] || levelColors[0];
+    }
+
+    // Physics - REDUCED for better control
+    const gravity = 0.4;
+    const friction = 0.99;
+    const bounceDamping = 0.7;
+    const maxSpeed = 25; // Maximum ball speed to prevent tunneling
+
+    // Define the playfield boundaries - PERCENTAGE BASED for mobile
+    function calculateBoundaries() {
+      return {
+        left: canvas.width * 0.06,
+        right: canvas.width * 0.94,
+        top: canvas.height * 0.02,
+        bottom: canvas.height * 0.95,
+        flipperY: canvas.height * 0.90
+      };
+    }
+
+    let boundaries = calculateBoundaries();
+
+    // Create solid boundary walls - DYNAMIC
+    function createWalls() {
+      const wallBottomY = canvas.height * 0.78;
+      const gapLeft = canvas.width * 0.30;
+      const gapRight = canvas.width * 0.70;
+
+      return [
+        // Left vertical wall
+        { x1: boundaries.left, y1: 0, x2: boundaries.left, y2: wallBottomY, type: 'vertical' },
+        // Right vertical wall
+        { x1: boundaries.right, y1: 0, x2: boundaries.right, y2: wallBottomY, type: 'vertical' },
+        // Top wall
+        { x1: boundaries.left, y1: boundaries.top, x2: boundaries.right, y2: boundaries.top, type: 'horizontal' },
+        // Bottom left angled wall - connects left wall to left flipper area
+        { x1: boundaries.left, y1: wallBottomY, x2: gapLeft, y2: boundaries.bottom, type: 'angled' },
+        // Bottom right angled wall - connects right wall to right flipper area
+        { x1: boundaries.right, y1: wallBottomY, x2: gapRight, y2: boundaries.bottom, type: 'angled' }
+      ];
+    }
+
+    let walls = createWalls();
+
+    // Flippers - DYNAMIC
+    function createFlippers() {
+      const flipperWidth = Math.min(140, canvas.width * 0.18); // Slightly longer flippers
+      return {
+        left: {
+          x: canvas.width * 0.30, // Aligned with left gap edge
+          y: boundaries.flipperY,
+          angle: -0.3, // Flatter angle for better coverage
+          width: flipperWidth,
+          rotating: false,
+          target: -0.3,
+          speed: 0
+        },
+        right: {
+          x: canvas.width * 0.70, // Aligned with right gap edge
+          y: boundaries.flipperY,
+          angle: 0.3, // Flatter angle for better coverage
+          width: flipperWidth,
+          rotating: false,
+          target: 0.3,
+          speed: 0
+        }
+      };
+    }
+
+    let flippers = createFlippers();
+
+    // Bumpers - DYNAMIC
+    function createBumpers() {
+      const baseRadius = Math.min(50, canvas.width * 0.06);
+      const smallRadius = Math.min(45, canvas.width * 0.055);
+      const tinyRadius = Math.min(40, canvas.width * 0.05);
+      const colors = getCurrentColors();
+
+      return [
+        { x: canvas.width * 0.25, y: canvas.height * 0.25, radius: baseRadius, color: colors.bumper1, hit: false },
+        { x: canvas.width * 0.5, y: canvas.height * 0.15, radius: baseRadius, color: colors.bumper2, hit: false },
+        { x: canvas.width * 0.75, y: canvas.height * 0.25, radius: baseRadius, color: colors.bumper3, hit: false },
+        { x: canvas.width * 0.35, y: canvas.height * 0.45, radius: smallRadius, color: colors.bumper4, hit: false },
+        { x: canvas.width * 0.65, y: canvas.height * 0.45, radius: smallRadius, color: colors.bumper5, hit: false },
+        { x: canvas.width * 0.5, y: canvas.height * 0.55, radius: tinyRadius, color: colors.bumper1, hit: false }
+      ];
+    }
+
+    let bumpers = createBumpers();
+
+    // Lasers
+    const lasers = [];
+    for (let i = 0; i < 6; i++) {
+      lasers.push({
+        x: 100 + Math.random() * (canvas.width - 200),
+        y: 50 + Math.random() * canvas.height * 0.5,
+        length: 150 + Math.random() * 150,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.008 + Math.random() * 0.015,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`
+      });
+    }
+
+    // Particles
+    const particles = [];
+
+    // Stars
+    const stars = [];
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: Math.random() * 0.3 + 0.1
+      });
+    }
+
+    // Detect mobile/tablet
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+
+    // Show mobile launch button when needed
+    function updateMobileLaunchButton() {
+      const mobileLaunchBtn = document.getElementById('mobileLaunchBtn');
+      // Only show if we have balls left AND less than 3 active
+      if (isMobile && game.ballsLeft > 0 && game.activeBalls.length < 3) {
+        mobileLaunchBtn.style.display = 'flex';
+      } else {
+        mobileLaunchBtn.style.display = 'none';
+      }
+    }
+
+    // Audio functions
+    function startBackgroundMusic() {
+      if (!game.musicStarted) {
+        backgroundMusic.volume = 0.7;
+        backgroundMusic.play().then(() => {
+          audioStatus.textContent = "Music: ON";
+          game.musicStarted = true;
+        }).catch(error => {
+          console.log("Audio play failed:", error);
+          audioStatus.textContent = "Music: Click to enable";
+        });
+      }
+    }
+
+    function toggleMusic() {
+      if (backgroundMusic.paused) {
+        backgroundMusic.play();
+        audioStatus.textContent = "Music: ON";
+      } else {
+        backgroundMusic.pause();
+        audioStatus.textContent = "Music: OFF";
+      }
+    }
+
+    // Set up audio event listeners
+    backgroundMusic.addEventListener('loadeddata', () => {
+      audioStatus.textContent = "Music: Ready - Click Launch!";
+    });
+
+    backgroundMusic.addEventListener('error', () => {
+      audioStatus.textContent = "Music: Error loading";
+    });
+
+    musicToggle.addEventListener('click', toggleMusic);
+
+    // Level management
+    function checkLevelUp() {
+      if (game.currentLevel <= game.maxLevel) {
+        const targetScore = game.levelThresholds[game.currentLevel - 1];
+        if (game.score >= targetScore && game.currentLevel < game.maxLevel) {
+          game.currentLevel++;
+          bumpers = createBumpers(); // Update colors
+          saveGame(); // Save after level up
+          updateUI();
+          showLevelUpMessage();
+        } else if (game.score >= game.levelThresholds[game.maxLevel - 1] && game.currentLevel === game.maxLevel) {
+          // Won the game!
+          saveGame();
+          setTimeout(() => {
+            document.getElementById('winMessage').style.display = 'block';
+          }, 1000);
+        }
+      }
+    }
+
+    function showLevelUpMessage() {
+      const msg = document.createElement('div');
+      msg.className = 'levelup';
+      msg.textContent = `LEVEL ${game.currentLevel}!`;
+      document.body.appendChild(msg);
+      setTimeout(() => msg.remove(), 1500);
+    }
+
+    class Ball {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = 0;
+        this.vy = 0;
+        this.radius = 10;
+        this.trail = [];
+        this.active = true;
+      }
+
+      update() {
+        if (!this.active) return;
+
+        this.vy += gravity;
+        this.vx *= friction;
+        this.vy *= friction;
+
+        // CRITICAL: Limit maximum speed to prevent tunneling
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+        if (speed > maxSpeed) {
+          const ratio = maxSpeed / speed;
+          this.vx *= ratio;
+          this.vy *= ratio;
+        }
+
+        // Move ball in small steps to prevent tunneling
+        const steps = Math.ceil(speed / 5);
+        const stepVX = this.vx / steps;
+        const stepVY = this.vy / steps;
+
+        const colors = getCurrentColors();
+
+        for (let step = 0; step < steps; step++) {
+          this.x += stepVX;
+          this.y += stepVY;
+
+          // IMMEDIATE boundary enforcement after each micro-step
+          const thick = 15; // Thick boundary margin
+
+          // Left wall
+          if (this.x < boundaries.left + this.radius + thick) {
+            this.x = boundaries.left + this.radius + thick;
+            this.vx = Math.abs(this.vx) * bounceDamping;
+            createParticles(this.x, this.y, colors.wall);
+          }
+
+          // Right wall
+          if (this.x > boundaries.right - this.radius - thick) {
+            this.x = boundaries.right - this.radius - thick;
+            this.vx = -Math.abs(this.vx) * bounceDamping;
+            createParticles(this.x, this.y, colors.wall);
+          }
+
+          // Top wall
+          if (this.y < boundaries.top + this.radius + thick) {
+            this.y = boundaries.top + this.radius + thick;
+            this.vy = Math.abs(this.vy) * bounceDamping;
+            createParticles(this.x, this.y, colors.wall);
+          }
+
+          // Check angled walls
+          this.checkAngledWalls();
+        }
+
+        // Trail
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 15) this.trail.shift();
+
+        this.checkBumperCollisions();
+        this.checkFlipperCollision(flippers.left);
+        this.checkFlipperCollision(flippers.right);
+
+        // Check if ball is lost
+        this.checkBallLoss();
+      }
+
+      checkAngledWalls() {
+        const colors = getCurrentColors();
+        // Only check the angled bottom walls (last 2 walls in array)
+        for (let i = 3; i < walls.length; i++) {
+          const wall = walls[i];
+
+          // Vector from wall start to end
+          const wallDX = wall.x2 - wall.x1;
+          const wallDY = wall.y2 - wall.y1;
+          const wallLength = Math.sqrt(wallDX * wallDX + wallDY * wallDY);
+
+          if (wallLength === 0) continue;
+
+          // Normalized wall direction
+          const wallNX = wallDX / wallLength;
+          const wallNY = wallDY / wallLength;
+
+          // Vector from wall start to ball
+          const ballDX = this.x - wall.x1;
+          const ballDY = this.y - wall.y1;
+
+          // Project ball onto wall line
+          const projection = ballDX * wallNX + ballDY * wallNY;
+          const clampedProj = Math.max(0, Math.min(wallLength, projection));
+
+          // Closest point on wall to ball
+          const closestX = wall.x1 + clampedProj * wallNX;
+          const closestY = wall.y1 + clampedProj * wallNY;
+
+          // Distance from ball to closest point
+          const distX = this.x - closestX;
+          const distY = this.y - closestY;
+          const distance = Math.sqrt(distX * distX + distY * distY);
+
+          // Collision with extra safety margin
+          const safetyMargin = 8;
+          if (distance < this.radius + safetyMargin) {
+            // Normal pointing from wall to ball
+            let normalX = distX / (distance || 1);
+            let normalY = distY / (distance || 1);
+
+            // Push ball away from wall aggressively
+            const overlap = (this.radius + safetyMargin) - distance;
+            this.x += normalX * (overlap + 2);
+            this.y += normalY * (overlap + 2);
+
+            // Reflect velocity
+            const dotProduct = this.vx * normalX + this.vy * normalY;
+            if (dotProduct < 0) {
+              this.vx -= 2 * dotProduct * normalX;
+              this.vy -= 2 * dotProduct * normalY;
+              this.vx *= bounceDamping;
+              this.vy *= bounceDamping;
+              createParticles(closestX, closestY, colors.wall);
+            }
+          }
+        }
+      }
+
+      checkBumperCollisions() {
+        bumpers.forEach(bumper => {
+          const dx = this.x - bumper.x;
+          const dy = this.y - bumper.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < this.radius + bumper.radius) {
+            const angle = Math.atan2(dy, dx);
+            const overlap = this.radius + bumper.radius - dist;
+
+            // Push ball away from bumper
+            this.x += Math.cos(angle) * (overlap + 1);
+            this.y += Math.sin(angle) * (overlap + 1);
+
+            // Apply velocity
+            const force = 25;
+            this.vx = Math.cos(angle) * force;
+            this.vy = Math.sin(angle) * force;
+
+            game.score += 100;
+            checkLevelUp();
+            updateUI();
+            bumper.hit = true;
+            setTimeout(() => bumper.hit = false, 100);
+            createParticles(bumper.x, bumper.y, bumper.color);
+          }
+        });
+      }
+
+      checkFlipperCollision(flipper) {
+        const cos = Math.cos(flipper.angle);
+        const sin = Math.sin(flipper.angle);
+
+        // Adjust for right flipper pivot point
+        const pivotOffsetX = flipper.x > canvas.width / 2 ? -flipper.width + 15 : -15;
+
+        const localX = (this.x - flipper.x) * cos + (this.y - flipper.y) * sin - pivotOffsetX;
+        const localY = -(this.x - flipper.x) * sin + (this.y - flipper.y) * cos;
+
+        if (localX > 0 && localX < flipper.width && Math.abs(localY) < 15 + this.radius) {
+          const basePower = 30;
+          const speedBonus = Math.abs(flipper.speed) * 20;
+          const power = basePower + speedBonus;
+
+          const hitAngle = flipper.angle - Math.PI / 2;
+          this.vx = Math.cos(hitAngle) * power;
+          this.vy = Math.sin(hitAngle) * power;
+
+          this.y = flipper.y - this.radius - 5;
+
+          game.score += 10;
+          checkLevelUp();
+          updateUI();
+          createParticles(this.x, this.y, '#fff');
+        }
+      }
+
+      checkBallLoss() {
+        const middleGapLeft = canvas.width * 0.30;
+        const middleGapRight = canvas.width * 0.70;
+
+        // Ball is lost if it's below the flippers and between the gap (now 40% width instead of 30%)
+        if (this.y > boundaries.bottom - 10 &&
+            this.x > middleGapLeft &&
+            this.x < middleGapRight) {
+          this.active = false;
+
+          // Remove this ball from active balls array
+          const index = game.activeBalls.indexOf(this);
+          if (index > -1) {
+            game.activeBalls.splice(index, 1);
+          }
+
+          // Only decrement balls left when a ball is lost
+          game.ballsLeft--;
+          saveGame(); // Save immediately when ball is lost
+          updateUI();
+
+          // Check if game over: no balls left AND no active balls
+          if (game.ballsLeft <= 0 && game.activeBalls.length === 0) {
+            game.gameActive = false;
+            showGameOver();
+          }
+        }
+      }
+
+      draw() {
+        if (!this.active) return;
+
+        // Trail
+        ctx.globalAlpha = 0.4;
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
+          const size = (i / this.trail.length) * this.radius;
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, size, 0, Math.PI * 2);
+          const hue = (i / this.trail.length) * 60 + 180;
+          ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // Ball glow
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 2.5);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+        gradient.addColorStop(0.4, 'rgba(0, 255, 255, 0.5)');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ball
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.strokeStyle = '#0ff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+    }
+
+    function createParticles(x, y, color) {
+      for (let i = 0; i < 15; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.5) * 12,
+          life: 1,
+          color: color
+        });
+      }
+    }
+
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.95;
+        p.vy *= 0.95;
+        p.life -= 0.015;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+    }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+        ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+      });
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    }
+
+    function drawBackground() {
+      ctx.fillStyle = '#fff';
+      stars.forEach(star => {
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+          star.y = 0;
+          star.x = Math.random() * canvas.width;
+        }
+        ctx.globalAlpha = 0.6;
+        ctx.fillRect(star.x, star.y, star.size, star.size);
+      });
+      ctx.globalAlpha = 1;
+
+      lasers.forEach(laser => {
+        laser.angle += laser.speed;
+        const x2 = laser.x + Math.cos(laser.angle) * laser.length;
+        const y2 = laser.y + Math.sin(laser.angle) * laser.length;
+
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = laser.color;
+        ctx.strokeStyle = laser.color;
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(laser.x, laser.y);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    function drawWalls() {
+      const colors = getCurrentColors();
+      ctx.strokeStyle = colors.wall;
+      ctx.lineWidth = 8;
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = colors.wall;
+      walls.forEach(wall => {
+        ctx.beginPath();
+        ctx.moveTo(wall.x1, wall.y1);
+        ctx.lineTo(wall.x2, wall.y2);
+        ctx.stroke();
+      });
+      ctx.shadowBlur = 0;
+    }
+
+    function drawBumpers() {
+      bumpers.forEach(bumper => {
+        const scale = bumper.hit ? 1.2 : 1;
+        const radius = bumper.radius * scale;
+
+        // Glow
+        const gradient = ctx.createRadialGradient(bumper.x, bumper.y, 0, bumper.x, bumper.y, radius * 1.8);
+        gradient.addColorStop(0, bumper.color);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(bumper.x, bumper.y, radius * 1.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bumper
+        ctx.beginPath();
+        ctx.arc(bumper.x, bumper.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        ctx.strokeStyle = bumper.color;
+        ctx.lineWidth = 5;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = bumper.color;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      });
+    }
+
+    function drawFlippers() {
+      Object.values(flippers).forEach(flipper => {
+        const oldAngle = flipper.angle;
+
+        if (flipper.rotating) {
+          flipper.angle += (flipper.target - flipper.angle) * 0.4;
+        } else {
+          const defaultAngle = flipper.x < canvas.width / 2 ? -0.3 : 0.3;
+          flipper.angle += (defaultAngle - flipper.angle) * 0.3;
+        }
+
+        flipper.speed = flipper.angle - oldAngle;
+
+        ctx.save();
+        ctx.translate(flipper.x, flipper.y);
+        ctx.rotate(flipper.angle);
+
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ff00ff';
+        ctx.fillStyle = '#ff00ff';
+
+        // Draw flipper - right flipper pivots from right edge
+        if (flipper.x > canvas.width / 2) {
+          // Right flipper - pivot at right edge
+          ctx.fillRect(-flipper.width + 15, -12, flipper.width, 24);
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(-flipper.width + 15, -12, flipper.width, 24);
+        } else {
+          // Left flipper - pivot at left edge
+          ctx.fillRect(-15, -12, flipper.width, 24);
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(-15, -12, flipper.width, 24);
+        }
+
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      });
+    }
+
+    function drawLauncher() {
+      const launcherX = boundaries.right + (canvas.width * 0.03);
+      const launcherY = canvas.height * 0.7;
+      const launcherWidth = Math.min(40, canvas.width * 0.05);
+      const launcherHeight = canvas.height * 0.25;
+
+      ctx.fillStyle = '#222';
+      ctx.fillRect(launcherX - launcherWidth/2, launcherY, launcherWidth, launcherHeight);
+      ctx.strokeStyle = '#0ff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(launcherX - launcherWidth/2, launcherY, launcherWidth, launcherHeight);
+
+      if (game.isCharging) {
+        const powerHeight = (game.launchPower / 100) * launcherHeight;
+        const gradient = ctx.createLinearGradient(0, launcherY + launcherHeight, 0, launcherY);
+        gradient.addColorStop(0, '#ff0000');
+        gradient.addColorStop(0.5, '#ffff00');
+        gradient.addColorStop(1, '#00ff00');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(launcherX - launcherWidth/2, launcherY + launcherHeight - powerHeight, launcherWidth, powerHeight);
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('score').textContent = game.score;
+      document.getElementById('ballsLeft').textContent = game.ballsLeft;
+      document.getElementById('activeBalls').textContent = game.activeBalls.length;
+      document.getElementById('power').textContent = Math.floor(game.launchPower);
+      document.getElementById('currentLevel').textContent = game.currentLevel;
+      updateMobileLaunchButton();
+    }
+
+    function gameLoop() {
+      try {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawBackground();
+        drawWalls();
+        drawBumpers();
+        drawFlippers();
+        drawLauncher();
+
+        // Update and draw all active balls
+        for (let i = game.activeBalls.length - 1; i >= 0; i--) {
+          const ball = game.activeBalls[i];
+          if (ball && ball.active && typeof ball.update === 'function') {
+            ball.update();
+            if (ball && ball.active && typeof ball.draw === 'function') {
+              ball.draw();
+            }
+          }
+        }
+
+        updateParticles();
+        drawParticles();
+      } catch (e) {
+        console.error('Game loop error:', e);
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    let chargeInterval = null;
+
+    function startCharging() {
+      // CRITICAL: Cannot launch if no balls left OR already have 3 active balls
+      if (game.ballsLeft <= 0 || game.activeBalls.length >= 3 || game.isCharging) {
+        return;
+      }
+
+      game.isCharging = true;
+      game.launchPower = 0;
+      chargeInterval = setInterval(() => {
+        game.launchPower = Math.min(100, game.launchPower + 2);
+        updateUI();
+      }, 30);
+
+      // Start music on first launch
+      if (!game.musicStarted) {
+        startBackgroundMusic();
+      }
+    }
+
+    function releaseLaunch() {
+      if (chargeInterval) {
+        clearInterval(chargeInterval);
+        chargeInterval = null;
+      }
+
+      // CRITICAL: Only launch if we have balls left AND less than 3 active
+      if (game.isCharging && game.ballsLeft > 0 && game.launchPower > 0 && game.activeBalls.length < 3) {
+        const launcherX = boundaries.right + (canvas.width * 0.03);
+        const launcherY = canvas.height * 0.7;
+        const newBall = new Ball(launcherX, launcherY + 20);
+        newBall.vy = -(game.launchPower / 100) * 30 - 8;
+        newBall.vx = -6;
+        game.activeBalls.push(newBall);
+        game.gameActive = true;
+        saveGame(); // Save after launching
+      }
+
+      game.isCharging = false;
+      game.launchPower = 0;
+      updateUI();
+    }
+
+    function showGameOver() {
+      document.getElementById('finalScore').textContent = game.score;
+      document.getElementById('finalLevel').textContent = game.currentLevel;
+      document.getElementById('gameOverModal').classList.add('show');
+    }
+
+    function hideGameOver() {
+      document.getElementById('gameOverModal').classList.remove('show');
+    }
+
+    function showAdModal() {
+      const adModal = document.getElementById('adModal');
+      const adSkipBtn = document.getElementById('adSkipBtn');
+      const adTimer = document.getElementById('adTimer');
+
+      hideGameOver();
+      adModal.classList.add('show');
+      adSkipBtn.style.display = 'none';
+
+      let timeLeft = 5;
+      adTimer.textContent = `Watch ad to continue... ${timeLeft}s`;
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          adTimer.textContent = `Watch ad to continue... ${timeLeft}s`;
+        } else {
+          clearInterval(countdown);
+          adTimer.textContent = 'Ad complete!';
+          adSkipBtn.style.display = 'block';
+        }
+      }, 1000);
+
+    }
+
+    function claimBallsFromAd() {
+      game.ballsLeft += 10;
+      saveGame(); // Save after claiming balls
+      updateUI();
+      document.getElementById('adModal').classList.remove('show');
+    }
+
+    function restartGame() {
+      game.score = 0;
+      game.ballsLeft = 10;
+      game.launchPower = 0;
+      game.isCharging = false;
+      game.gameActive = false;
+      game.activeBalls = [];
+      game.currentLevel = 1;
+      particles.length = 0;
+      bumpers = createBumpers(); // Reset colors
+      document.getElementById('winMessage').style.display = 'none';
+      hideGameOver();
+      saveGame(); // Save the reset state
+      updateUI();
+    }
+
+    // Controls
+    document.getElementById('launchBtn').addEventListener('mousedown', startCharging);
+    document.getElementById('launchBtn').addEventListener('mouseup', releaseLaunch);
+
+    document.getElementById('leftFlipper').addEventListener('mousedown', () => {
+      flippers.left.rotating = true;
+      flippers.left.target = 0.5;
+    });
+
+    document.getElementById('leftFlipper').addEventListener('mouseup', () => {
+      flippers.left.rotating = false;
+    });
+
+    document.getElementById('rightFlipper').addEventListener('mousedown', () => {
+      flippers.right.rotating = true;
+      flippers.right.target = -0.5;
+    });
+
+    document.getElementById('rightFlipper').addEventListener('mouseup', () => {
+      flippers.right.rotating = false;
+    });
+
+    document.getElementById('restartBtn').addEventListener('click', restartGame);
+
+    document.getElementById('clearSaveBtn').addEventListener('click', () => {
+      localStorage.removeItem('neonPinballSave');
+      alert('Save cleared! Refresh page to start fresh.');
+    });
+
+    // Mobile touch controls
+    const mobileLeftFlipper = document.getElementById('mobileLeftFlipper');
+    const mobileRightFlipper = document.getElementById('mobileRightFlipper');
+    const mobileLaunchBtn = document.getElementById('mobileLaunchBtn');
+
+    // Left flipper touch
+    mobileLeftFlipper.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      flippers.left.rotating = true;
+      flippers.left.target = 0.5;
+    });
+
+    mobileLeftFlipper.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      flippers.left.rotating = false;
+    });
+
+    // Right flipper touch
+    mobileRightFlipper.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      flippers.right.rotating = true;
+      flippers.right.target = -0.5;
+    });
+
+    mobileRightFlipper.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      flippers.right.rotating = false;
+    });
+
+    // Mobile launch button
+    mobileLaunchBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startCharging();
+    });
+
+    mobileLaunchBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      releaseLaunch();
+    });
+
+    // Game over modal buttons
+    document.getElementById('watchAdBtn').addEventListener('click', showAdModal);
+    document.getElementById('restartFromOverBtn').addEventListener('click', restartGame);
+    document.getElementById('adSkipBtn').addEventListener('click', claimBallsFromAd);
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'a' || e.key === 'A') {
+        flippers.left.rotating = true;
+        flippers.left.target = 0.5;
+      }
+      if (e.key === 'd' || e.key === 'D') {
+        flippers.right.rotating = true;
+        flippers.right.target = -0.5;
+      }
+      if (e.key === ' ') {
+        e.preventDefault();
+        startCharging();
+      }
+      if (e.key === 'r' || e.key === 'R') {
+        restartGame();
+      }
+      if (e.key === 'm' || e.key === 'M') {
+        toggleMusic();
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'a' || e.key === 'A') {
+        flippers.left.rotating = false;
+      }
+      if (e.key === 'd' || e.key === 'D') {
+        flippers.right.rotating = false;
+      }
+      if (e.key === ' ') {
+        e.preventDefault();
+        releaseLaunch();
+      }
+    });
+
+    updateUI();
+
+    // Load saved game
+    loadGame();
+    bumpers = createBumpers(); // Update bumper colors based on loaded level
+    updateUI(); // Update UI with loaded values
+
+    // Handle window resize for mobile orientation changes
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+
+      // Recalculate all dynamic elements
+      boundaries = calculateBoundaries();
+      walls = createWalls();
+      flippers = createFlippers();
+      bumpers = createBumpers();
+
+      // Recreate stars for new canvas size
+      stars.length = 0;
+      for (let i = 0; i < 150; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: Math.random() * 0.3 + 0.1
+        });
+      }
+
+      // Recreate lasers for new canvas size
+      lasers.length = 0;
+      for (let i = 0; i < 6; i++) {
+        lasers.push({
+          x: 100 + Math.random() * (canvas.width - 200),
+          y: 50 + Math.random() * canvas.height * 0.5,
+          length: 150 + Math.random() * 150,
+          angle: Math.random() * Math.PI * 2,
+          speed: 0.008 + Math.random() * 0.015,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`
+        });
+      }
+    });
+
+    gameLoop();
+  </script>
+  <script type="module" src="./src/pinball-brand.js?v=1" onerror="document.querySelector('#sponsorLogoPlaceholder').textContent = 'Sponsor unavailable'; document.documentElement.classList.remove('brand-loading')"></script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 const CACHE_PREFIX = `titan-app-maker-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE = `${CACHE_PREFIX}v17`;
+const CACHE = `${CACHE_PREFIX}v18`;
 const FILES = [
-  './', './index.html', './admin.html', './terms.html', './privacy.html', './space-game.html', './checkers-game.html', './chess-game.html', './qr-maker.html', './website-maker.html', './manifest.webmanifest',
-  './src/style.css', './src/main.js', './src/checkers-builder.js', './src/checkers-logo.js', './src/chess-builder.js', './src/chess-brand.js', './src/qr-maker-builder.js', './src/qr-maker-brand.js', './src/website-maker-builder.js', './src/website-maker-brand.js', './src/admin.js', './src/credit-balance.js', './src/firebase.js', './src/game-logo.js', './src/install.js',
+  './', './index.html', './admin.html', './terms.html', './privacy.html', './space-game.html', './checkers-game.html', './chess-game.html', './pinball-game.html', './qr-maker.html', './website-maker.html', './manifest.webmanifest',
+  './src/style.css', './src/main.js', './src/checkers-builder.js', './src/checkers-logo.js', './src/chess-builder.js', './src/chess-brand.js', './src/pinball-builder.js', './src/pinball-brand.js', './src/qr-maker-builder.js', './src/qr-maker-brand.js', './src/website-maker-builder.js', './src/website-maker-brand.js', './src/admin.js', './src/credit-balance.js', './src/firebase.js', './src/game-logo.js', './src/install.js',
   './assets/titan-logo.png', './assets/galactic-drift.mp3', './assets/qrcode.min.js',
   './assets/icons/favicon.ico', './assets/icons/favicon-96x96.png',
   './assets/icons/apple-touch-icon.png',

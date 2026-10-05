@@ -7,6 +7,7 @@ test('game creation uses the advertised credit costs and rejects unknown types',
   assert.equal(gameCost('checkers'), 4);
   assert.equal(gameCost('websiteMaker'), 3);
   assert.equal(gameCost('chess'), 1);
+  assert.equal(gameCost('pinball'), 1);
   assert.equal(gameCost('qrMaker'), 2);
   assert.equal(gameCost(''), null);
   assert.equal(gameCost('other'), null);
