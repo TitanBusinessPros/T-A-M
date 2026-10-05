@@ -1,5 +1,5 @@
 const CACHE_PREFIX = `titan-app-maker-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE = `${CACHE_PREFIX}v10`;
+const CACHE = `${CACHE_PREFIX}v11`;
 const FILES = [
   './', './index.html', './admin.html', './terms.html', './privacy.html', './space-game.html', './checkers-game.html', './qr-maker.html', './manifest.webmanifest',
   './src/style.css', './src/main.js', './src/checkers-builder.js', './src/checkers-logo.js', './src/qr-maker-builder.js', './src/qr-maker-brand.js', './src/admin.js', './src/credit-balance.js', './src/firebase.js', './src/game-logo.js', './src/install.js',
