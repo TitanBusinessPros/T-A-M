@@ -6,6 +6,7 @@ function gameCost(gameType) {
   if (gameType === 'chess') return 1;
   if (gameType === 'pinball') return 1;
   if (gameType === 'invoiceGenerator') return 2;
+  if (gameType === 'match3') return 2;
   return null;
 }
 

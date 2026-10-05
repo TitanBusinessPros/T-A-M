@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with custom games and apps from Titan App Maker." />
     <title>Titan App Maker | Custom Games &amp; Apps</title>
-    <link rel="stylesheet" href="./src/style.css?v=11" />
+    <link rel="stylesheet" href="./src/style.css?v=12" />
   </head>
   <body>
     <div class="page-shell">
@@ -287,9 +287,43 @@
           <div class="qr-wrap"><div id="invoiceGeneratorQrTarget" role="img" aria-label="QR code for your Invoice Generator"></div><a id="invoiceGeneratorDownloadQr" class="download-link" download="invoice-generator-share-code.png">DOWNLOAD SHARE CODE ↓</a></div>
         </section>
 
+        <section class="builder match3-builder" aria-labelledby="match3-heading">
+          <div class="builder-form">
+            <div class="step-label"><span>01</span> MAKE IT YOURS</div>
+            <h2 id="match3-heading">Match 3 game</h2>
+            <p class="form-copy">Add your logo and website. Players see “Sponsored by” above your logo in a white box beside the game, with your clickable website below it.</p>
+            <div class="credits-card"><strong>Match 3 game: 2 credits</strong><small>Creating your finished Match 3 game and QR code uses 2 credits. Your balance is shown above when signed in.</small></div>
+            <form id="match3Form">
+              <label for="match3Logo">Sponsor logo (required)</label>
+              <input id="match3Logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="match3Status" required />
+              <label class="logo-label" for="match3Website">Website address</label>
+              <input id="match3Website" name="website" type="text" inputmode="url" maxlength="512" placeholder="example.com" autocomplete="url" required />
+              <p class="logo-help" id="match3Status" role="status" aria-live="polite">PNG, JPG, or WebP logo. Maximum 100 KB. Your logo and website update in the preview.</p>
+              <button class="primary-button" id="match3CreateButton" type="submit">MAKE MY MATCH 3 GAME <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your game. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+          </div>
+          <div class="preview-column">
+            <div class="step-label"><span>02</span> PLAYABLE PREVIEW</div>
+            <div class="game-preview match3-preview"><iframe id="match3Preview" src="./match-3-game.html?preview=1" title="Playable Match 3 game with sponsor preview"></iframe></div>
+            <p class="preview-caption">Play Match 3 here. Your logo and website appear beside the game as you add them.</p>
+          </div>
+        </section>
+
+        <section class="share-card" id="match3ShareCard" hidden aria-live="polite" aria-labelledby="match3ShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="match3ShareHeading">Your Match 3 game is ready</h2>
+            <p>Share the link or scan the code so people can play your branded Match 3 game.</p>
+            <div class="link-row"><input id="match3Link" type="text" readonly aria-label="Your Match 3 game link" /><button id="match3CopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="match3OpenGame" class="open-game-link" target="_blank" rel="noopener">OPEN GAME ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="match3QrTarget" role="img" aria-label="QR code for your Match 3 game"></div><a id="match3DownloadQr" class="download-link" download="match-3-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
+        </section>
+
         <section class="how-it-works" aria-label="How it works">
           <div><span>1</span><p>Choose a game or app and add your company details</p></div>
-          <div><span>2</span><p>Use 1 credit for Space, Chess, or Pinball, 2 for the QR tool or Invoice Generator, 3 for Website Maker, or 4 for Checkers</p></div>
+          <div><span>2</span><p>Use 1 credit for Space, Chess, or Pinball, 2 for the QR tool, Invoice Generator, or Match 3, 3 for Website Maker, or 4 for Checkers</p></div>
           <div><span>3</span><p>Share your branded game or app so people can use it</p></div>
         </section>
       </main>
@@ -314,7 +348,7 @@
     </dialog>
     <dialog id="creditPurchaseDialog" class="purchase-dialog" aria-labelledby="creditPurchaseTitle" aria-describedby="finalSaleNotice">
       <h2 id="creditPurchaseTitle">Buy 5 credits for $5</h2>
-      <p>Space, Chess, and Pinball games use 1 credit, the QR tool and Invoice Generator use 2, Website Maker uses 3, and Checkers games use 4.</p>
+      <p>Space, Chess, and Pinball games use 1 credit, the QR tool, Invoice Generator, and Match 3 use 2, Website Maker uses 3, and Checkers games use 4.</p>
       <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
       <label class="purchase-consent" for="purchaseTerms">
         <input id="purchaseTerms" type="checkbox" />
@@ -333,5 +367,6 @@
     <script type="module" src="./src/qr-maker-builder.js?v=10"></script>
     <script type="module" src="./src/website-maker-builder.js?v=2"></script>
     <script type="module" src="./src/invoice-generator-builder.js?v=2"></script>
+    <script type="module" src="./src/match3-builder.js?v=1"></script>
   </body>
 </html>
