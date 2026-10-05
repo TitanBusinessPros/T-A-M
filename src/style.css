@@ -62,11 +62,13 @@ h1 em { color: #758252; font-style: normal; }
 .learn-money-button:hover, .learn-money-button:focus-visible { background: #354b34; }
 .learn-money-panel { max-width: 760px; margin: 24px auto 0; padding: 24px 28px; border: 1px solid #cbdba8; border-radius: 16px; background: #fff; text-align: left; box-shadow: 0 12px 32px rgba(38, 48, 37, .06); }
 .learn-money-panel[hidden] { display: none; }
-.learn-money-panel h2 { margin: 0 0 10px; font-size: 23px; }
+.learn-money-panel h2 { margin: 0 0 10px; font-size: 23px; text-align: center; }
 .learn-money-panel p, .learn-money-panel li { color: #4f5b53; font-size: 14px; line-height: 1.6; }
 .learn-money-panel p { margin: 0; }
 .learn-money-panel ul { margin: 16px 0 0; padding-left: 21px; }
 .learn-money-panel li + li { margin-top: 9px; }
+.learn-money-panel .free-credits-copy { margin-top: 18px; padding-top: 16px; border-top: 1px solid #dce4cf; }
+.learn-money-panel a { color: #465537; text-underline-offset: 3px; }
 
 .builder { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 39px; background: #fff; border: 1px solid #e7e8e2; border-radius: 20px; box-shadow: 0 20px 55px rgba(38, 48, 37, .055); }
 .checkers-builder { margin-top: 28px; }
