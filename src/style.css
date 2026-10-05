@@ -22,6 +22,13 @@ button { cursor: pointer; }
 .brand { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 800; letter-spacing: .11em; }
 .install-button { margin-left: auto; }
 .auth-button, .install-button { min-height: 36px; }
+.account-summary { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 14px 0 0; padding: 15px 18px; border: 1px solid #cbdba8; border-radius: 10px; background: #edf5dc; font: 500 11px 'DM Mono', monospace; }
+.account-summary[hidden] { display: none; }
+.account-email { min-width: 0; overflow-wrap: anywhere; color: #566253; }
+.account-email strong { color: var(--ink); }
+.account-credit-total { display: flex; align-items: baseline; gap: 8px; margin-left: auto; color: #526a35; white-space: nowrap; }
+.account-credit-total strong { color: var(--ink); font-family: 'DM Sans', Arial, sans-serif; font-size: 24px; font-weight: 800; }
+.account-summary button { min-height: 35px; }
 .credits-card { display: flex; flex-direction: column; gap: 8px; margin: 0 0 22px; padding: 16px; border: 1px solid #dce4cf; border-radius: 10px; background: #f4f8ed; font-size: 13px; }
 .credits-card span, .credits-card small { color: var(--muted); }
 .buy-button { align-self: flex-start; padding: 11px 14px; border-radius: 7px; background: var(--green); color: var(--ink); font: 500 11px 'DM Mono', monospace; text-decoration: none; }
@@ -119,6 +126,7 @@ form input[type="file"] { padding: 11px; font-size: 12px; }
 @media (max-width: 420px) {
   .brand { font-size: 12px; }
   .auth-button, .install-button { max-width: 120px; padding: 4px; font-size: 9px; }
+  .account-credit-total { margin-left: 0; }
   .builder { padding: 20px; }
   h2 { font-size: 23px; }
   .link-row { flex-direction: column; }

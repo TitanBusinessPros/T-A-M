@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f5f3ef" />
     <link rel="icon" href="./assets/icons/favicon.ico" sizes="any" />
     <title>Grant Credits | Titan App Maker</title>
-    <link rel="stylesheet" href="./src/style.css?v=5" />
+    <link rel="stylesheet" href="./src/style.css?v=6" />
   </head>
   <body>
     <div class="page-shell">
@@ -14,6 +14,12 @@
         <a class="brand" href="./" aria-label="Titan App Maker home">Titan App Maker</a>
         <button id="authButton" class="secondary-button auth-button" type="button">SIGN IN WITH GOOGLE</button>
       </header>
+
+      <div id="accountSummary" class="account-summary" aria-label="Your account credits" hidden>
+        <span class="account-email">SIGNED IN AS <strong id="accountEmail"></strong></span>
+        <span class="account-credit-total">YOUR CREDITS <strong id="accountCreditBalance" aria-live="polite">Loading credits...</strong></span>
+        <button id="refreshCreditButton" class="secondary-button" type="button">REFRESH</button>
+      </div>
 
       <main class="admin-page">
         <p class="eyebrow">ADMIN</p>
@@ -37,6 +43,6 @@
 
       <footer class="footer"><span>Titan App Maker</span><span>ADMIN</span></footer>
     </div>
-    <script type="module" src="./src/admin.js?v=5"></script>
+    <script type="module" src="./src/admin.js?v=6"></script>
   </body>
 </html>

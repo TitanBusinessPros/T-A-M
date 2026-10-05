@@ -1,4 +1,5 @@
-import { currentUser, getCreditStatus, grantCredits, signIn, signOutUser, watchUser } from './firebase.js?v=5';
+import { currentUser, grantCredits, signIn, signOutUser, watchUser } from './firebase.js?v=6';
+import { setupCreditBalance } from './credit-balance.js?v=6';
 
 const authButton = document.querySelector('#authButton');
 const accessStatus = document.querySelector('#accessStatus');
@@ -10,27 +11,30 @@ const grantButton = document.querySelector('#grantButton');
 const grantStatus = document.querySelector('#grantStatus');
 
 let grantRequestId;
+const creditDisplay = setupCreditBalance({
+  onStatus(status) {
+    if (!status) {
+      grantPanel.hidden = true;
+      accessStatus.textContent = 'Sign in with the admin Google account to continue.';
+      return;
+    }
+    grantPanel.hidden = !status.isAdmin;
+    accessStatus.textContent = status.isAdmin
+      ? 'Admin account confirmed.'
+      : 'This page is available only to the admin account.';
+  },
+  onError() {
+    grantPanel.hidden = true;
+    accessStatus.textContent = 'Could not check admin access. Press REFRESH or reload the page.';
+  },
+});
 
-watchUser(async (user) => {
+watchUser((user) => {
   authButton.textContent = user ? `SIGN OUT (${user.displayName || 'GOOGLE'})` : 'SIGN IN WITH GOOGLE';
   grantPanel.hidden = true;
   grantStatus.textContent = '';
-  if (!user) {
-    accessStatus.textContent = 'Sign in with the admin Google account to continue.';
-    return;
-  }
-
-  accessStatus.textContent = 'Checking admin access...';
-  try {
-    const { isAdmin } = await getCreditStatus();
-    if (currentUser()?.uid !== user.uid) return;
-    grantPanel.hidden = !isAdmin;
-    accessStatus.textContent = isAdmin ? 'Admin account confirmed.' : 'This page is available only to the admin account.';
-  } catch (error) {
-    if (currentUser()?.uid !== user.uid) return;
-    accessStatus.textContent = 'Could not check admin access. Please refresh the page.';
-    console.error(error);
-  }
+  accessStatus.textContent = user ? 'Checking admin access...' : 'Sign in with the admin Google account to continue.';
+  creditDisplay.refresh();
 });
 
 authButton.addEventListener('click', async () => {
@@ -64,6 +68,7 @@ grantForm.addEventListener('submit', async (event) => {
     grantStatus.textContent = `Added ${result.credits} credit${result.credits === 1 ? '' : 's'} for ${result.email}.`;
     grantForm.reset();
     grantRequestId = undefined;
+    creditDisplay.refresh();
   } catch (error) {
     grantStatus.textContent = error.message || 'Could not add credits. Please try again.';
     console.error(error);

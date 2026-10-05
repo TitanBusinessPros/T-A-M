@@ -1,4 +1,5 @@
-import { createGame, currentUser, getCreditStatus, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js?v=5';
+import { createGame, currentUser, getCreditStatus, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js?v=6';
+import { setupCreditBalance } from './credit-balance.js?v=6';
 
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');
@@ -28,30 +29,28 @@ let previewLogoUrl;
 let gameHasLogo = false;
 let confirmedDownload = false;
 let pendingRequestId;
-async function refreshCredits() {
-  const user = currentUser();
-  if (!user) {
-    creditBalance.textContent = 'Sign in to see your credits.';
-    adminLink.hidden = true;
-    return;
-  }
-  try {
-    const { credits, isAdmin } = await getCreditStatus();
-    if (currentUser()?.uid !== user.uid) return;
+const creditDisplay = setupCreditBalance({
+  onStatus(status) {
+    if (!status) {
+      creditBalance.textContent = 'Sign in to see your credits.';
+      adminLink.hidden = true;
+      return;
+    }
+    const { credits, isAdmin } = status;
     creditBalance.textContent = `${credits} credit${credits === 1 ? '' : 's'} available`;
     adminLink.hidden = !isAdmin;
-  } catch (error) {
-    if (currentUser()?.uid !== user.uid) return;
+  },
+  onError() {
     creditBalance.textContent = 'Could not load credits. Try again.';
     adminLink.hidden = true;
-    console.error(error);
-  }
-}
+  },
+});
 
 watchUser((user) => {
   authButton.textContent = user ? `SIGN OUT (${user.displayName || 'GOOGLE'})` : 'SIGN IN WITH GOOGLE';
   adminLink.hidden = true;
-  refreshCredits();
+  creditBalance.textContent = user ? 'Loading credits...' : 'Sign in to see your credits.';
+  creditDisplay.refresh();
 });
 
 authButton.addEventListener('click', async () => {
@@ -74,8 +73,6 @@ buyCredits.addEventListener('click', async (event) => {
     showToast(error.message || 'Could not open checkout.');
   }
 });
-
-window.addEventListener('focus', refreshCredits);
 
 function updateLogoPreview() {
   const slot = gamePreview.contentDocument?.querySelector('#sponsorLogoSlot');
@@ -178,7 +175,7 @@ form.addEventListener('submit', async (event) => {
       ? 'Local test only: your phone must be on the same Wi-Fi as this computer.'
       : 'Scan this code to open your game with your business name.';
     trackQrCreated();
-    refreshCredits();
+    creditDisplay.refresh();
     shareCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (error) {
     logoHelp.textContent = error.message || 'Could not make the game. Please try again.';
