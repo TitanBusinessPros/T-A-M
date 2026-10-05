@@ -159,7 +159,7 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const logoPath = String(request.data?.logoPath || '');
   const gameId = String(request.data?.requestId || '');
   const website = gameType === 'qrMaker' ? normalizeWebsite(request.data?.website) : null;
-  if (!idPattern.test(gameId) || (gameType !== 'checkers' && (!title || title.length > 48)) || (gameType === 'checkers' && title)) {
+  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker'].includes(gameType) && title)) {
     throw new HttpsError('invalid-argument', 'A valid game request is required.');
   }
   if (gameType === 'qrMaker' && (!website || logoPath)) {

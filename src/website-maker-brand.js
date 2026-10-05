@@ -9,8 +9,6 @@ if (params.has('preview')) {
 }
 
 if (gameId) {
-  const topBrand = document.querySelector('#makerTopBrand');
-  const brandName = document.querySelector('#makerBrandName');
   const logoSlot = document.querySelector('#makerBrandLogoSlot');
   try {
     if (!/^[0-9a-f-]{36}$/.test(gameId)) throw new Error('Invalid tool link.');
@@ -18,21 +16,16 @@ if (gameId) {
     const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js');
     const tool = await getDoc(doc(getFirestore(firebaseApp), 'games', gameId));
     if (!tool.exists() || tool.data().gameType !== 'websiteMaker') throw new Error('This Website Maker could not be found.');
-    const { title, logoPath } = tool.data();
-    if (!title || !logoPath) throw new Error('Invalid Website Maker details.');
+    const { logoPath } = tool.data();
+    if (!logoPath) throw new Error('Invalid Website Maker details.');
     const logoUrl = await getLogoURL(logoPath);
     const image = new Image();
-    image.alt = `${title} logo`;
+    image.alt = 'Business logo';
     image.onload = () => logoSlot.replaceChildren(image);
     image.onerror = () => { logoSlot.textContent = 'Logo unavailable'; };
     image.src = logoUrl;
-    topBrand.textContent = title;
-    brandName.textContent = title;
-    document.title = `${title} | Website Maker`;
     if (!params.has('preview')) exportButton.disabled = false;
   } catch (error) {
-    topBrand.textContent = 'Website Maker unavailable';
-    brandName.textContent = 'Website Maker unavailable';
     logoSlot.textContent = 'Logo unavailable';
     console.error(error);
   }

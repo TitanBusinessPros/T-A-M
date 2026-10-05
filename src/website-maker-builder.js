@@ -1,7 +1,5 @@
 const form = document.querySelector('#websiteMakerForm');
-const nameInput = document.querySelector('#websiteMakerCompany');
 const logoInput = document.querySelector('#websiteMakerLogo');
-const count = document.querySelector('#websiteMakerCharacterCount');
 const status = document.querySelector('#websiteMakerStatus');
 const preview = document.querySelector('#websiteMakerPreview');
 const button = document.querySelector('#websiteMakerCreateButton');
@@ -20,19 +18,15 @@ function validateLogo(file) {
 }
 
 function updatePreview() {
-  count.textContent = `${nameInput.value.length} / 48`;
   const doc = preview.contentDocument;
-  if (!doc?.querySelector('#makerTopBrand')) return;
-  const name = nameInput.value.trim() || 'Your company name goes here';
-  doc.querySelector('#makerTopBrand').textContent = name;
-  doc.querySelector('#makerBrandName').textContent = name;
+  if (!doc?.querySelector('#makerBrandLogoSlot')) return;
   const slot = doc.querySelector('#makerBrandLogoSlot');
   if (!previewUrl) {
     slot.textContent = 'Put your logo here';
     return;
   }
   const image = doc.createElement('img');
-  image.alt = `${name} logo`;
+  image.alt = 'Your logo';
   image.src = previewUrl;
   slot.replaceChildren(image);
 }
@@ -45,7 +39,6 @@ function resetResult() {
 }
 
 preview.addEventListener('load', updatePreview);
-nameInput.addEventListener('input', () => { resetResult(); updatePreview(); });
 logoInput.addEventListener('change', () => {
   resetResult();
   if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -72,9 +65,8 @@ updatePreview();
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const name = nameInput.value.trim();
   const file = logoInput.files[0];
-  if (!name || name.length > 48 || !file || button.disabled) return;
+  if (!file || button.disabled) return;
   try {
     validateLogo(file);
     shareCard.hidden = true;
@@ -85,7 +77,7 @@ form.addEventListener('submit', async (event) => {
     const logoPath = await uploadLogo(file);
     button.firstChild.textContent = 'USING 3 CREDITS ';
     requestId ||= crypto.randomUUID();
-    const { gameUrl } = await createGame(name, logoPath, requestId, 'websiteMaker');
+    const { gameUrl } = await createGame('', logoPath, requestId, 'websiteMaker');
     const url = new URL(gameUrl);
     button.firstChild.textContent = 'MAKING SHARE CODE ';
     qrTarget.replaceChildren();

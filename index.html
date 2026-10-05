@@ -157,13 +157,10 @@
           <div class="builder-form">
             <div class="step-label"><span>01</span> MAKE IT YOURS</div>
             <h2 id="website-maker-heading">Website Maker</h2>
-            <p class="form-copy">Brand this tool with your company name and logo. Share it so people can create websites with your business featured in the tool.</p>
+            <p class="form-copy">Add your logo to brand the Website Maker, then share the tool so people can create websites.</p>
             <div class="credits-card"><strong>Website Maker: 3 credits</strong><small>Creating your branded Website Maker and share link uses 3 credits. People using your tool can export websites for free.</small></div>
             <form id="websiteMakerForm">
-              <label for="websiteMakerCompany">Company name</label>
-              <input id="websiteMakerCompany" name="companyName" type="text" maxlength="48" placeholder="Example: Acme Auto Repair" autocomplete="organization" required />
-              <div class="input-meta"><span>Shown on your branded Website Maker.</span><span id="websiteMakerCharacterCount">0 / 48</span></div>
-              <label class="logo-label" for="websiteMakerLogo">Company logo (required)</label>
+              <label for="websiteMakerLogo">Logo (required)</label>
               <input id="websiteMakerLogo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="websiteMakerStatus" required />
               <p class="logo-help" id="websiteMakerStatus" role="status" aria-live="polite">PNG, JPG, or WebP. Maximum 100 KB. Your branding updates in the preview.</p>
               <button class="primary-button" id="websiteMakerCreateButton" type="submit">MAKE MY WEBSITE MAKER <span aria-hidden="true">↗</span></button>
@@ -172,9 +169,9 @@
           </div>
           <div class="preview-column">
             <div class="step-label"><span>02</span> LIVE PREVIEW</div>
-            <p class="preview-caption">See your company name and logo in the tool. Scroll inside it to try the controls and view the full page preview.</p>
+            <p class="preview-caption">See your logo in the tool. Scroll inside it to try the controls and view the full page preview.</p>
           </div>
-          <iframe id="websiteMakerPreview" class="website-maker-frame" src="./website-maker.html?preview=1&v=2" title="Branded Website Maker tool with scrollable live preview"></iframe>
+          <iframe id="websiteMakerPreview" class="website-maker-frame" src="./website-maker.html?preview=1&v=3" title="Branded Website Maker tool with scrollable live preview"></iframe>
         </section>
 
         <section class="share-card" id="websiteMakerShareCard" hidden aria-live="polite" aria-labelledby="websiteMakerShareHeading">
@@ -230,6 +227,6 @@
     <script type="module" src="./src/main.js?v=10"></script>
     <script type="module" src="./src/checkers-builder.js?v=10"></script>
     <script type="module" src="./src/qr-maker-builder.js?v=10"></script>
-    <script type="module" src="./src/website-maker-builder.js?v=1"></script>
+    <script type="module" src="./src/website-maker-builder.js?v=2"></script>
   </body>
 </html>
