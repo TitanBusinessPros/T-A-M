@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with a custom game and QR code from Titan App Maker." />
     <title>Titan App Maker | Space Game</title>
-    <link rel="stylesheet" href="./src/style.css?v=4" />
+    <link rel="stylesheet" href="./src/style.css?v=5" />
   </head>
   <body>
     <div class="page-shell">
@@ -39,20 +39,8 @@
               <span id="creditBalance">Sign in to see your credits.</span>
               <a id="buyCredits" class="buy-button" href="#buy-credits">BUY CREDITS FOR ONLY $5</a>
               <small>$5 buys 5 credits. Each finished game and QR code uses 1 credit.</small>
+              <a id="adminLink" class="admin-link" href="./admin.html" hidden>GRANT CREDITS</a>
             </div>
-
-            <section class="admin-card" id="adminCard" aria-labelledby="adminHeading" hidden>
-              <h3 id="adminHeading">Grant credits</h3>
-              <p>Give 1 to 100 credits to an email address. They can collect them when they sign in with Google.</p>
-              <form id="grantForm">
-                <label for="grantEmail">Email address</label>
-                <input id="grantEmail" name="email" type="email" autocomplete="email" required />
-                <label for="grantAmount">Credits</label>
-                <input id="grantAmount" name="credits" type="number" min="1" max="100" step="1" required />
-                <button id="grantButton" class="primary-button" type="submit">ADD CREDITS</button>
-              </form>
-              <p id="grantStatus" class="grant-status" role="status" aria-live="polite"></p>
-            </section>
 
             <form id="brandForm">
               <label for="businessName">Business name</label>
@@ -112,7 +100,7 @@
     </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script defer src="./src/install.js?v=4"></script>
-    <script type="module" src="./src/main.js?v=4"></script>
+    <script defer src="./src/install.js?v=5"></script>
+    <script type="module" src="./src/main.js?v=5"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import { createGame, currentUser, getCreditStatus, grantCredits, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js?v=4';
+import { createGame, currentUser, getCreditStatus, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js?v=5';
 
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');
@@ -21,74 +21,37 @@ const continueNoLogo = document.querySelector('#continueNoLogo');
 const authButton = document.querySelector('#authButton');
 const buyCredits = document.querySelector('#buyCredits');
 const creditBalance = document.querySelector('#creditBalance');
-const adminCard = document.querySelector('#adminCard');
-const grantForm = document.querySelector('#grantForm');
-const grantEmail = document.querySelector('#grantEmail');
-const grantAmount = document.querySelector('#grantAmount');
-const grantButton = document.querySelector('#grantButton');
-const grantStatus = document.querySelector('#grantStatus');
+const adminLink = document.querySelector('#adminLink');
 
 let toastTimer;
 let previewLogoUrl;
 let gameHasLogo = false;
 let confirmedDownload = false;
 let pendingRequestId;
-let grantRequestId;
 async function refreshCredits() {
   const user = currentUser();
   if (!user) {
     creditBalance.textContent = 'Sign in to see your credits.';
-    adminCard.hidden = true;
+    adminLink.hidden = true;
     return;
   }
   try {
     const { credits, isAdmin } = await getCreditStatus();
     if (currentUser()?.uid !== user.uid) return;
     creditBalance.textContent = `${credits} credit${credits === 1 ? '' : 's'} available`;
-    adminCard.hidden = !isAdmin;
+    adminLink.hidden = !isAdmin;
   } catch (error) {
     if (currentUser()?.uid !== user.uid) return;
     creditBalance.textContent = 'Could not load credits. Try again.';
-    adminCard.hidden = true;
+    adminLink.hidden = true;
     console.error(error);
   }
 }
 
 watchUser((user) => {
   authButton.textContent = user ? `SIGN OUT (${user.displayName || 'GOOGLE'})` : 'SIGN IN WITH GOOGLE';
-  adminCard.hidden = true;
-  grantStatus.textContent = '';
+  adminLink.hidden = true;
   refreshCredits();
-});
-
-grantForm.addEventListener('input', () => {
-  grantRequestId = undefined;
-  grantStatus.textContent = '';
-});
-
-grantForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const email = grantEmail.value.trim();
-  const credits = Number(grantAmount.value);
-  if (!grantForm.reportValidity() || !Number.isInteger(credits) || credits < 1 || credits > 100) {
-    grantStatus.textContent = 'Enter a valid email and 1 to 100 whole credits.';
-    return;
-  }
-  try {
-    grantButton.disabled = true;
-    grantStatus.textContent = 'Adding credits...';
-    grantRequestId ||= crypto.randomUUID();
-    const result = await grantCredits(email, credits, grantRequestId);
-    grantStatus.textContent = `Added ${result.credits} credit${result.credits === 1 ? '' : 's'} for ${result.email}.`;
-    grantForm.reset();
-    grantRequestId = undefined;
-    refreshCredits();
-  } catch (error) {
-    grantStatus.textContent = error.message || 'Could not add credits. Please try again.';
-    console.error(error);
-  } finally {
-    grantButton.disabled = false;
-  }
 });
 
 authButton.addEventListener('click', async () => {

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f3ef" />
+    <link rel="icon" href="./assets/icons/favicon.ico" sizes="any" />
+    <title>Grant Credits | Titan App Maker</title>
+    <link rel="stylesheet" href="./src/style.css?v=5" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Titan App Maker home">Titan App Maker</a>
+        <button id="authButton" class="secondary-button auth-button" type="button">SIGN IN WITH GOOGLE</button>
+      </header>
+
+      <main class="admin-page">
+        <p class="eyebrow">ADMIN</p>
+        <h1>Grant credits</h1>
+        <p>Give 1 to 100 credits to an email address. The credits will be there when that person signs in with Google using the same email.</p>
+        <p id="accessStatus" role="status" aria-live="polite">Checking admin access...</p>
+
+        <section id="grantPanel" class="admin-panel" aria-label="Grant credits to an email address" hidden>
+          <form id="grantForm">
+            <label for="grantEmail">Email address</label>
+            <input id="grantEmail" name="email" type="email" autocomplete="email" required />
+            <label for="grantAmount">Credits</label>
+            <input id="grantAmount" name="credits" type="number" min="1" max="100" step="1" required />
+            <button id="grantButton" class="primary-button" type="submit">ADD CREDITS</button>
+          </form>
+          <p id="grantStatus" class="admin-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <a class="admin-back" href="./">BACK TO GAME</a>
+      </main>
+
+      <footer class="footer"><span>Titan App Maker</span><span>ADMIN</span></footer>
+    </div>
+    <script type="module" src="./src/admin.js?v=5"></script>
+  </body>
+</html>
