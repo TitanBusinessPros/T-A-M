@@ -157,22 +157,41 @@
           <div class="builder-form">
             <div class="step-label"><span>01</span> MAKE IT YOURS</div>
             <h2 id="website-maker-heading">Website Maker</h2>
-            <p class="form-copy">Add your logo, company details, images, and colors. Watch your website take shape in the live preview, then export an HTML file.</p>
-            <div class="credits-card"><strong>Website Maker: 3 credits</strong><small>Exporting your finished website uses 3 credits. Your current balance is shown above when signed in.</small></div>
-            <p class="form-copy">Use the editor below to make your website. Scroll inside the editor to reach all the settings and the export button.</p>
-            <div class="fine-print">Sign in with Google to export your website. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+            <p class="form-copy">Brand this tool with your company name and logo. Share it so people can create websites with your business featured in the tool.</p>
+            <div class="credits-card"><strong>Website Maker: 3 credits</strong><small>Creating your branded Website Maker and share link uses 3 credits. People using your tool can export websites for free.</small></div>
+            <form id="websiteMakerForm">
+              <label for="websiteMakerCompany">Company name</label>
+              <input id="websiteMakerCompany" name="companyName" type="text" maxlength="48" placeholder="Example: Acme Auto Repair" autocomplete="organization" required />
+              <div class="input-meta"><span>Shown on your branded Website Maker.</span><span id="websiteMakerCharacterCount">0 / 48</span></div>
+              <label class="logo-label" for="websiteMakerLogo">Company logo (required)</label>
+              <input id="websiteMakerLogo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="websiteMakerStatus" required />
+              <p class="logo-help" id="websiteMakerStatus" role="status" aria-live="polite">PNG, JPG, or WebP. Maximum 100 KB. Your branding updates in the preview.</p>
+              <button class="primary-button" id="websiteMakerCreateButton" type="submit">MAKE MY WEBSITE MAKER <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your tool. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
           </div>
           <div class="preview-column">
             <div class="step-label"><span>02</span> LIVE PREVIEW</div>
-            <p class="preview-caption">Scroll up and down inside the preview to see your entire website.</p>
+            <p class="preview-caption">See your company name and logo in the tool. Scroll inside it to try the controls and view the full page preview.</p>
           </div>
-          <iframe class="website-maker-frame" src="./website-maker.html" title="Website Maker editor and scrollable live preview"></iframe>
+          <iframe id="websiteMakerPreview" class="website-maker-frame" src="./website-maker.html?preview=1&v=2" title="Branded Website Maker tool with scrollable live preview"></iframe>
+        </section>
+
+        <section class="share-card" id="websiteMakerShareCard" hidden aria-live="polite" aria-labelledby="websiteMakerShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="websiteMakerShareHeading">Your Website Maker is ready</h2>
+            <p>Share the link or scan the code so people can make and export websites with your company branding in the tool.</p>
+            <div class="link-row"><input id="websiteMakerLink" type="text" readonly aria-label="Your branded Website Maker link" /><button id="websiteMakerCopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="websiteMakerOpenTool" class="open-game-link" target="_blank" rel="noopener">OPEN TOOL ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="websiteMakerQrTarget" role="img" aria-label="QR code for your Website Maker"></div><a id="websiteMakerDownloadQr" class="download-link" download="website-maker-share-code.png">DOWNLOAD SHARE CODE ↓</a></div>
         </section>
 
         <section class="how-it-works" aria-label="How it works">
           <div><span>1</span><p>Choose a game or app and add your company details</p></div>
           <div><span>2</span><p>Use 1 credit for Space, 2 for the QR tool, 3 for Website Maker, or 4 for Checkers</p></div>
-          <div><span>3</span><p>Share your game or app, or download your website</p></div>
+          <div><span>3</span><p>Share your branded game or app so people can use it</p></div>
         </section>
       </main>
 
@@ -211,5 +230,6 @@
     <script type="module" src="./src/main.js?v=10"></script>
     <script type="module" src="./src/checkers-builder.js?v=10"></script>
     <script type="module" src="./src/qr-maker-builder.js?v=10"></script>
+    <script type="module" src="./src/website-maker-builder.js?v=1"></script>
   </body>
 </html>

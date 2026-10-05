@@ -132,9 +132,6 @@
 
         .landing-header { text-align: center; }
 
-        .landing-header img { display: block; max-width: 160px; max-height: 100px; object-fit: contain; margin: 0 auto 10px; }
-        .landing-header img[hidden] { display: none; }
-
         .landing-header h1 {
             font-size: 28px;
             color: #2c3e50;
@@ -283,6 +280,9 @@
             margin-top: 20px;
         }
 
+        .maker-brand-name { margin: -10px 0 20px; color: #ecf0f1; font-size: 15px; font-weight: 700; line-height: 1.4; }
+        .maker-brand-logo img { display: block; max-width: 180px; max-height: 110px; margin: 0 auto 10px; object-fit: contain; }
+
         .color-input-wrapper {
             display: flex;
             gap: 10px;
@@ -332,7 +332,8 @@
     <div class="builder-container">
         <!-- Control Panel -->
         <div class="control-panel">
-            <h2>Landing Page Builder</h2>
+            <h2>Website Maker</h2>
+            <p id="makerTopBrand" class="maker-brand-name">Your company name goes here</p>
 
             <!-- Header Section -->
             <div class="control-section">
@@ -340,11 +341,6 @@
                 <div class="control-group">
                     <label>Header Title</label>
                     <input type="text" id="headerTitle" value="Your Company Name" maxlength="48" placeholder="Enter header title">
-                </div>
-                <div class="control-group">
-                    <label for="websiteLogo">Your logo (optional, max 100 KB)</label>
-                    <input type="file" id="websiteLogo" accept="image/png,image/jpeg,image/webp">
-                    <p id="logoStatus" role="status" style="font-size: 13px; margin-top: 7px;"></p>
                 </div>
                 <div class="control-group">
                     <label>Header Font</label>
@@ -608,12 +604,13 @@
             <!-- Export -->
             <div class="control-section">
                 <p style="font-size: 16px; line-height: 1.5;">Get a free website forever using GitHub!</p>
-                <button id="exportButton" class="btn btn-success" onclick="exportHTML()">Export to HTML · 3 credits</button>
+                <button id="exportButton" class="btn btn-success" onclick="exportHTML()" disabled>Export to HTML</button>
                 <p id="exportStatus" role="status" style="font-size: 13px; line-height: 1.5; margin-top: 9px;"></p>
             </div>
 
             <div class="control-section" style="border-top: 3px solid #3498db; padding-top: 20px; margin-top: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; color: #2c3e50;">
-                <p style="font-size: 20px; font-weight: 700;">Put your logo here</p>
+                <div id="makerBrandLogoSlot" class="maker-brand-logo" style="font-size: 20px; font-weight: 700;">Put your logo here</div>
+                <p id="makerBrandName" style="font-size: 17px; font-weight: 700; margin-top: 10px;">Your company name goes here</p>
                 <p style="font-size: 16px; line-height: 1.5; margin: 12px 8px; font-weight: 700;">This branding is for informational purposes only and does not appear in exported pages</p>
             </div>
         </div>
@@ -621,7 +618,6 @@
         <div class="preview-area">
             <div id="preview">
                 <header class="landing-header">
-                    <img id="previewLogo" alt="Your logo" hidden>
                     <h1 id="previewHeaderTitle">Your Company Name</h1>
                 </header>
 
@@ -709,30 +705,6 @@
     </div>
 
     <script>
-        let websiteLogoData = '';
-        document.getElementById('websiteLogo').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const status = document.getElementById('logoStatus');
-            const previewLogo = document.getElementById('previewLogo');
-            websiteLogoData = '';
-            previewLogo.hidden = true;
-            previewLogo.removeAttribute('src');
-            if (!file) return;
-            if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 100 * 1024) {
-                event.target.value = '';
-                status.textContent = 'Choose a PNG, JPG, or WebP logo under 100 KB.';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = () => {
-                websiteLogoData = reader.result;
-                previewLogo.src = websiteLogoData;
-                previewLogo.hidden = false;
-                status.textContent = 'Your logo appears in the preview and exported website.';
-            };
-            reader.readAsDataURL(file);
-        });
-
         // Real-time preview updates
         document.getElementById('headerTitle').addEventListener('input', function(e) {
             document.getElementById('previewHeaderTitle').textContent = e.target.value;
@@ -892,8 +864,7 @@
         }
 
         // Export to HTML
-        let pendingExportId = '';
-        async function exportHTML() {
+        function exportHTML() {
             const button = document.getElementById('exportButton');
             const status = document.getElementById('exportStatus');
             if (button.disabled) return;
@@ -980,9 +951,6 @@
         }
 
         .landing-header { text-align: center; }
-
-        .landing-header img { display: block; max-width: 160px; max-height: 100px; object-fit: contain; margin: 0 auto 10px; }
-        .landing-header img[hidden] { display: none; }
 
         .landing-header h1 {
             font-size: 28px;
@@ -1163,7 +1131,6 @@
 </head>
 <body>
     <header class="landing-header">
-        ${websiteLogoData ? `<img src="${websiteLogoData}" alt="Company logo">` : ''}
         <h1>${document.getElementById('headerTitle').value}</h1>
     </header>
 
@@ -1200,14 +1167,6 @@ ${sectionsHTML}
 </body>
 </html>`;
 
-            status.textContent = 'Signing in and checking credits...';
-            const { createGame, currentUser, signIn } = await import('./src/firebase.js?v=10');
-            if (!currentUser()) await signIn();
-            if (!pendingExportId) pendingExportId = crypto.randomUUID();
-            await createGame(title, '', pendingExportId, 'websiteMaker');
-            window.parent.dispatchEvent(new Event('credits-changed'));
-            status.textContent = '3 credits used. Downloading your website...';
-
             // Create download
             const blob = new Blob([html], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
@@ -1219,8 +1178,7 @@ ${sectionsHTML}
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            pendingExportId = '';
-            status.textContent = 'Your HTML file was downloaded. 3 credits used.';
+            status.textContent = 'Your HTML file was downloaded.';
             } catch (error) {
                 status.textContent = error.message || 'Export failed. Please try again.';
             } finally {
@@ -1228,5 +1186,6 @@ ${sectionsHTML}
             }
         }
     </script>
+    <script type="module" src="./src/website-maker-brand.js?v=1"></script>
 </body>
 </html>

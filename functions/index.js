@@ -165,8 +165,8 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   if (gameType === 'qrMaker' && (!website || logoPath)) {
     throw new HttpsError('invalid-argument', 'A valid company website is required for the QR maker.');
   }
-  if (gameType === 'websiteMaker' && logoPath) {
-    throw new HttpsError('invalid-argument', 'Website exports do not need a stored logo.');
+  if (gameType === 'websiteMaker' && !logoPath) {
+    throw new HttpsError('invalid-argument', 'A logo is required for the Website Maker.');
   }
   if (gameType === 'checkers' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
