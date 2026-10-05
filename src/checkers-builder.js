@@ -1,5 +1,3 @@
-import { createGame, currentUser, signIn, uploadLogo, validateLogo } from './firebase.js?v=8';
-
 const form = document.querySelector('#checkersForm');
 const input = document.querySelector('#checkersLogo');
 const help = document.querySelector('#checkersLogoHelp');
@@ -12,6 +10,12 @@ const openLink = document.querySelector('#checkersOpenGame');
 const download = document.querySelector('#checkersDownloadQr');
 let previewUrl;
 let requestId;
+
+function validateLogo(file) {
+  if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) throw new Error('Choose a PNG, JPG, or WebP logo.');
+  if (file.size === 0) throw new Error('This logo file is empty.');
+  if (file.size > 100 * 1024) throw new Error('Logo must be 100 KB or smaller.');
+}
 
 function updatePreview() {
   const slot = preview.contentDocument?.querySelector('#sponsorLogoSlot');
@@ -61,6 +65,7 @@ form.addEventListener('submit', async (event) => {
   if (!file) return;
   try {
     validateLogo(file);
+    const { createGame, currentUser, signIn, uploadLogo } = await import('./firebase.js?v=8');
     shareCard.hidden = true;
     button.disabled = true;
     if (!currentUser()) await signIn();
