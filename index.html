@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with custom games and apps from Titan App Maker." />
     <title>Titan App Maker | Custom Games &amp; Apps</title>
-    <link rel="stylesheet" href="./src/style.css?v=13" />
+    <link rel="stylesheet" href="./src/style.css?v=14" />
   </head>
   <body>
     <div class="page-shell">
@@ -253,6 +253,40 @@
           <div class="qr-wrap"><div id="websiteMakerQrTarget" role="img" aria-label="QR code for your Website Maker"></div><a id="websiteMakerDownloadQr" class="download-link" download="website-maker-share-code.png">DOWNLOAD SHARE CODE ↓</a></div>
         </section>
 
+        <section class="builder website-photo-builder" aria-labelledby="website-photo-heading">
+          <div class="builder-form">
+            <div class="step-label"><span>01</span> MAKE IT YOURS</div>
+            <h2 id="website-photo-heading">Website Photo Builder</h2>
+            <p class="form-copy">Add your logo above the tool title and your clickable website below the logo. Share the branded tool so people can upload photos and export their own websites.</p>
+            <div class="credits-card"><strong>Website Photo Builder: 2 credits</strong><small>Creating your branded Website Photo Builder and share link uses 2 credits. People using your tool can build photo websites for free.</small></div>
+            <form id="websitePhotoBuilderForm">
+              <label for="websitePhotoBuilderLogo">Logo (required)</label>
+              <input id="websitePhotoBuilderLogo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="websitePhotoBuilderStatus" required />
+              <label class="logo-label" for="websitePhotoBuilderWebsite">Website address</label>
+              <input id="websitePhotoBuilderWebsite" name="website" type="text" inputmode="url" maxlength="512" placeholder="example.com" autocomplete="url" required />
+              <p class="logo-help" id="websitePhotoBuilderStatus" role="status" aria-live="polite">PNG, JPG, or WebP logo. Maximum 100 KB. Your logo and website update in the preview.</p>
+              <button class="primary-button" id="websitePhotoBuilderCreateButton" type="submit">MAKE MY WEBSITE PHOTO BUILDER <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your tool. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+          </div>
+          <div class="preview-column">
+            <div class="step-label"><span>02</span> LIVE PREVIEW</div>
+            <p class="preview-caption">See your logo and website above the tool title. Scroll inside the preview to try the photo uploader, templates, and export.</p>
+          </div>
+          <iframe id="websitePhotoBuilderPreview" class="website-photo-frame" src="./website-photo-builder.html?preview=1" title="Website Photo Builder with scrollable live preview"></iframe>
+        </section>
+
+        <section class="share-card" id="websitePhotoBuilderShareCard" hidden aria-live="polite" aria-labelledby="websitePhotoBuilderShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="websitePhotoBuilderShareHeading">Your Website Photo Builder is ready</h2>
+            <p>Share the link or scan the code so people can create photo websites with your branding above the tool.</p>
+            <div class="link-row"><input id="websitePhotoBuilderLink" type="text" readonly aria-label="Your Website Photo Builder link" /><button id="websitePhotoBuilderCopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="websitePhotoBuilderOpenTool" class="open-game-link" target="_blank" rel="noopener">OPEN TOOL ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="websitePhotoBuilderQrTarget" role="img" aria-label="QR code for your Website Photo Builder"></div><a id="websitePhotoBuilderDownloadQr" class="download-link" download="website-photo-builder-share-code.png">DOWNLOAD SHARE CODE ↓</a></div>
+        </section>
+
         <section class="builder invoice-generator-builder" aria-labelledby="invoice-generator-heading">
           <div class="builder-form">
             <div class="step-label"><span>01</span> MAKE IT YOURS</div>
@@ -357,7 +391,7 @@
 
         <section class="how-it-works" aria-label="How it works">
           <div><span>1</span><p>Choose a game or app and add your company details</p></div>
-          <div><span>2</span><p>Use 1 credit for Space, Chess, or Pinball, 2 for the QR tool, Invoice Generator, Match 3, or Follow Along, 3 for Website Maker, or 4 for Checkers</p></div>
+          <div><span>2</span><p>Use 1 credit for Space, Chess, or Pinball, 2 for the QR tool, Invoice Generator, Website Photo Builder, Match 3, or Follow Along, 3 for Website Maker, or 4 for Checkers</p></div>
           <div><span>3</span><p>Share your branded game or app so people can use it</p></div>
         </section>
       </main>
@@ -382,7 +416,7 @@
     </dialog>
     <dialog id="creditPurchaseDialog" class="purchase-dialog" aria-labelledby="creditPurchaseTitle" aria-describedby="finalSaleNotice">
       <h2 id="creditPurchaseTitle">Buy 5 credits for $5</h2>
-      <p>Space, Chess, and Pinball games use 1 credit, the QR tool, Invoice Generator, Match 3, and Follow Along use 2, Website Maker uses 3, and Checkers games use 4.</p>
+      <p>Space, Chess, and Pinball games use 1 credit, the QR tool, Invoice Generator, Website Photo Builder, Match 3, and Follow Along use 2, Website Maker uses 3, and Checkers games use 4.</p>
       <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
       <label class="purchase-consent" for="purchaseTerms">
         <input id="purchaseTerms" type="checkbox" />
@@ -400,6 +434,7 @@
     <script type="module" src="./src/pinball-builder.js?v=3"></script>
     <script type="module" src="./src/qr-maker-builder.js?v=10"></script>
     <script type="module" src="./src/website-maker-builder.js?v=2"></script>
+    <script type="module" src="./src/website-photo-builder-builder.js?v=1"></script>
     <script type="module" src="./src/invoice-generator-builder.js?v=2"></script>
     <script type="module" src="./src/match3-builder.js?v=1"></script>
     <script type="module" src="./src/follow-along-builder.js?v=1"></script>

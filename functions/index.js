@@ -24,6 +24,7 @@ const pinballBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/pinball-game.h
 const invoiceGeneratorBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/invoice-generator.html';
 const match3BaseUrl = 'https://titanbusinesspros.github.io/T-A-M/match-3-game.html';
 const followAlongBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/follow-along-game.html';
+const websitePhotoBuilderBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/website-photo-builder.html';
 const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -163,8 +164,8 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const title = String(request.data?.title || '').trim();
   const logoPath = String(request.data?.logoPath || '');
   const gameId = String(request.data?.requestId || '');
-  const website = ['qrMaker', 'chess', 'pinball', 'invoiceGenerator', 'match3', 'followAlong'].includes(gameType) ? normalizeWebsite(request.data?.website) : null;
-  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker', 'chess', 'pinball', 'invoiceGenerator', 'match3', 'followAlong'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker', 'chess', 'pinball', 'invoiceGenerator', 'match3', 'followAlong'].includes(gameType) && title)) {
+  const website = ['qrMaker', 'chess', 'pinball', 'invoiceGenerator', 'match3', 'followAlong', 'websitePhotoBuilder'].includes(gameType) ? normalizeWebsite(request.data?.website) : null;
+  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker', 'chess', 'pinball', 'invoiceGenerator', 'match3', 'followAlong', 'websitePhotoBuilder'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker', 'chess', 'pinball', 'invoiceGenerator', 'match3', 'followAlong', 'websitePhotoBuilder'].includes(gameType) && title)) {
     throw new HttpsError('invalid-argument', 'A valid game request is required.');
   }
   if (gameType === 'qrMaker' && (!website || logoPath)) {
@@ -187,6 +188,9 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   }
   if (gameType === 'followAlong' && (!logoPath || !website)) {
     throw new HttpsError('invalid-argument', 'A logo and website address are required for Follow Along.');
+  }
+  if (gameType === 'websitePhotoBuilder' && (!logoPath || !website)) {
+    throw new HttpsError('invalid-argument', 'A logo and website address are required for Website Photo Builder.');
   }
   if (gameType === 'checkers' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
@@ -220,6 +224,6 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
       gameType, title, logoPath, ...(website ? { website } : {}), createdAt: FieldValue.serverTimestamp(),
     });
   });
-  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameType === 'chess' ? chessBaseUrl : gameType === 'pinball' ? pinballBaseUrl : gameType === 'invoiceGenerator' ? invoiceGeneratorBaseUrl : gameType === 'match3' ? match3BaseUrl : gameType === 'followAlong' ? followAlongBaseUrl : gameBaseUrl;
+  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameType === 'chess' ? chessBaseUrl : gameType === 'pinball' ? pinballBaseUrl : gameType === 'invoiceGenerator' ? invoiceGeneratorBaseUrl : gameType === 'match3' ? match3BaseUrl : gameType === 'followAlong' ? followAlongBaseUrl : gameType === 'websitePhotoBuilder' ? websitePhotoBuilderBaseUrl : gameBaseUrl;
   return { gameId, gameUrl: `${baseUrl}?game=${gameId}` };
 });

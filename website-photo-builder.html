@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Photo Builder</title>
+    <script>if (new URLSearchParams(location.search).has('game')) document.documentElement.classList.add('brand-loading');</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        #photoBuilderBrand { margin: 0 auto 16px; text-align: center; }
+        html.brand-loading #photoBuilderBrand { visibility: hidden; }
+        #photoBuilderLogoBox { display: grid; place-items: center; width: min(220px, 100%); min-height: 115px; margin: 0 auto 10px; padding: 10px; border-radius: 10px; background: #fff; color: #334; font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
+        #photoBuilderLogoBox img { display: block; max-width: 100%; max-height: 95px; object-fit: contain; }
+        #photoBuilderWebsite { display: block; width: fit-content; max-width: 100%; margin: 0 auto; color: #fff; font-size: 18px; font-weight: 700; text-decoration: underline; overflow-wrap: anywhere; }
+        #photoBuilderWebsite[aria-disabled="true"] { text-decoration: none; pointer-events: none; }
+
+        h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .editor-panel {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            background: #f9f9f9;
+            overflow-y: auto;
+            max-height: 800px;
+        }
+
+        .preview-panel {
+            flex: 2;
+            min-width: 500px;
+            padding: 25px;
+            background: white;
+            border-left: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #1a2a6c;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #1a2a6c;
+            outline: none;
+        }
+
+        button {
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #253a8d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-area {
+            border: 2px dashed #b21f1f;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background: #f9f0f0;
+            border-color: #fdbb2d;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            color: #b21f1f;
+            margin-bottom: 15px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+            border-color: #fdbb2d;
+        }
+
+        .website-preview {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            flex-grow: 1;
+            background: #f9f9f9;
+            overflow-y: auto;
+        }
+
+        .website-header {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .website-content {
+            padding: 20px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .masonry-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .masonry-layout img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-layout {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px 0;
+            scroll-snap-type: x mandatory;
+        }
+
+        .carousel-layout img {
+            scroll-snap-align: center;
+            min-width: 280px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .minimal-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .minimal-layout img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .photo-grid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .photo-grid img:hover {
+            transform: scale(1.03);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .github-tip { text-align: center; font-size: 16px; font-weight: 700; line-height: 1.5; }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .upload-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-hidden {
+            display: none;
+        }
+
+        .template-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .template {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .template:hover {
+            border-color: #1a2a6c;
+            transform: translateY(-5px);
+        }
+
+        .template.active {
+            border-color: #1a2a6c;
+            background: #f0f5ff;
+        }
+
+        .template-preview { display: grid; place-items: center; min-height: 60px; margin-bottom: 10px; border-radius: 5px; background: #eef1fb; color: #1a2a6c; font-size: 13px; font-weight: 700; }
+
+        .export-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .export-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .export-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .code-preview {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            max-height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            font-style: italic;
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .editor-panel, .preview-panel { min-width: 0; width: 100%; }
+
+            .preview-panel {
+                border-left: none;
+                border-top: 1px solid #eee;
+            }
+
+            .template-selector { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div id="photoBuilderBrand">
+                <div id="photoBuilderLogoBox">Put your logo here</div>
+                <a id="photoBuilderWebsite" href="#" target="_top" aria-disabled="true">Your website appears here</a>
+            </div>
+            <h1>Website Photo Builder</h1>
+            <p class="subtitle">Create stunning websites with your own photos - export complete HTML code/Tip-Use Image Compressor to upload more images if having trouble loading images!</p>
+        </header>
+
+        <div class="app-container">
+            <div class="editor-panel">
+                <h2 class="section-title">Website Settings</h2>
+
+                <div class="form-group">
+                    <label for="siteTitle">Site Title</label>
+                    <input type="text" id="siteTitle" placeholder="My Photo Gallery" value="My Photography Portfolio">
+                </div>
+
+                <div class="form-group">
+                    <label for="siteDescription">Site Description</label>
+                    <textarea id="siteDescription" rows="3" placeholder="A description of your website">Welcome to my photography portfolio. Here you'll find my best work from around the world.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="bgColor">Background Color</label>
+                    <select id="bgColor">
+                        <option value="#f9f9f9">Light Gray</option>
+                        <option value="#ffffff">White</option>
+                        <option value="#fff8e1">Light Yellow</option>
+                        <option value="#e8f5e9">Light Green</option>
+                        <option value="#e3f2fd">Light Blue</option>
+                        <option value="#fce4ec">Light Pink</option>
+                    </select>
+                </div>
+
+                <h2 class="section-title">Choose a Template</h2>
+
+                <div class="template-selector">
+                    <div class="template active" data-template="grid">
+                        <div class="template-preview">Grid layout</div>
+                        <div>Photo Grid</div>
+                    </div>
+                    <div class="template" data-template="masonry">
+                        <div class="template-preview">Masonry layout</div>
+                        <div>Masonry</div>
+                    </div>
+                    <div class="template" data-template="carousel">
+                        <div class="template-preview">Carousel layout</div>
+                        <div>Carousel</div>
+                    </div>
+                    <div class="template" data-template="minimal">
+                        <div class="template-preview">Minimal layout</div>
+                        <div>Minimal</div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Upload Photos</h2>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p>Drag & Drop your images here</p>
+                    <p>or</p>
+                    <button id="browseBtn">Browse Files</button>
+                    <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                </div>
+
+                <div id="uploadStatus" class="upload-status status-hidden"></div>
+
+                <div class="gallery" id="uploadedGallery">
+                    <div class="placeholder">Upload image here</div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <h2 class="section-title">Live Preview</h2>
+
+                <div class="website-preview" id="websitePreview">
+                    <div class="website-header">
+                        <h2 id="previewTitle">My Photography Portfolio</h2>
+                        <p id="previewDescription">Welcome to my photography portfolio. Here you'll find my best work from around the world.</p>
+                    </div>
+
+                    <div class="website-content">
+                        <h3>My Photos</h3>
+                        <div class="photo-grid" id="previewGallery">
+                            <div class="placeholder">Upload image here</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <p class="github-tip">Check out GitHub to put your websites up for free!</p>
+                    <button id="exportBtn" class="btn-success"><i class="fas fa-download"></i> Export Website</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="exportModal" class="export-modal">
+        <div class="export-content">
+            <div class="export-header">
+                <h2>Export Your Website Code</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <p>Copy the HTML code below to use your website anywhere:</p>
+            <div class="code-preview" id="codePreview">
+                <!-- Generated code will appear here -->
+            </div>
+            <div class="export-options">
+                <button id="copyCodeBtn" class="btn-success"><i class="fas fa-copy"></i> Copy Code</button>
+                <button id="downloadCodeBtn" class="btn-secondary"><i class="fas fa-download"></i> Download HTML</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const browseBtn = document.getElementById('browseBtn');
+            const uploadedGallery = document.getElementById('uploadedGallery');
+            const previewGallery = document.getElementById('previewGallery');
+            const siteTitle = document.getElementById('siteTitle');
+            const siteDescription = document.getElementById('siteDescription');
+            const bgColor = document.getElementById('bgColor');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewDescription = document.getElementById('previewDescription');
+            const websitePreview = document.getElementById('websitePreview');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const templates = document.querySelectorAll('.template');
+            const exportBtn = document.getElementById('exportBtn');
+            const exportModal = document.getElementById('exportModal');
+            const closeBtn = document.querySelector('.close-btn');
+            const codePreview = document.getElementById('codePreview');
+            const copyCodeBtn = document.getElementById('copyCodeBtn');
+            const downloadCodeBtn = document.getElementById('downloadCodeBtn');
+
+            // Store uploaded images
+            let uploadedImages = [];
+            let userUploadedImages = [];
+            let currentTemplate = 'grid';
+
+            // Handle browse button click
+            browseBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+            uploadArea.addEventListener('click', function(event) {
+                if (!event.target.closest('#browseBtn')) fileInput.click();
+            });
+
+            // Handle file selection
+            fileInput.addEventListener('change', function(e) {
+                handleFiles(e.target.files);
+            });
+
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.background = '#f9f0f0';
+                uploadArea.style.borderColor = '#fdbb2d';
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.style.background = '';
+                uploadArea.style.borderColor = '#b21f1f';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.background = '';
+                uploadArea.style.borderColor = '#b21f1f';
+                handleFiles(e.dataTransfer.files);
+            });
+
+            // Update preview when title/description changes
+            siteTitle.addEventListener('input', updatePreview);
+            siteDescription.addEventListener('input', updatePreview);
+            bgColor.addEventListener('change', updatePreview);
+
+            // Template selection
+            templates.forEach(template => {
+                template.addEventListener('click', function() {
+                    templates.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTemplate = this.dataset.template;
+                    updatePreview();
+                });
+            });
+
+            // Export functionality
+            exportBtn.addEventListener('click', showExportModal);
+            closeBtn.addEventListener('click', () => exportModal.style.display = 'none');
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === exportModal) {
+                    exportModal.style.display = 'none';
+                }
+            });
+
+            // Copy code functionality
+            copyCodeBtn.addEventListener('click', function() {
+                const textArea = document.createElement('textarea');
+                textArea.value = codePreview.textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                const originalText = copyCodeBtn.innerHTML;
+                copyCodeBtn.innerHTML = '<i class="fas fa-check"></i> Code Copied!';
+                setTimeout(() => {
+                    copyCodeBtn.innerHTML = originalText;
+                }, 2000);
+            });
+
+            // Download code functionality
+            downloadCodeBtn.addEventListener('click', function() {
+                const blob = new Blob([codePreview.textContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'my-website.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            function updatePreview() {
+                previewTitle.textContent = siteTitle.value;
+                previewDescription.textContent = siteDescription.value;
+                websitePreview.style.backgroundColor = bgColor.value;
+
+                // Clear previous layout classes
+                previewGallery.className = '';
+
+                // Apply the selected template layout
+                if (currentTemplate === 'grid') {
+                    previewGallery.classList.add('photo-grid');
+                } else if (currentTemplate === 'masonry') {
+                    previewGallery.classList.add('masonry-layout');
+                } else if (currentTemplate === 'carousel') {
+                    previewGallery.classList.add('carousel-layout');
+                } else if (currentTemplate === 'minimal') {
+                    previewGallery.classList.add('minimal-layout');
+                }
+            }
+
+            function showStatus(message, isError = false) {
+                uploadStatus.textContent = message;
+                uploadStatus.className = isError ? 'upload-status status-error' : 'upload-status status-success';
+
+                setTimeout(() => {
+                    uploadStatus.className = 'upload-status status-hidden';
+                }, 3000);
+            }
+
+            function handleFiles(files) {
+                if (files.length === 0) return;
+
+                let successfulUploads = 0;
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        showStatus(`Skipped ${file.name}: Not an image file`, true);
+                        continue;
+                    }
+
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showStatus(`Skipped ${file.name}: File too large (max 5MB)`, true);
+                        continue;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        // Add to uploaded images arrays
+                        uploadedImages.push({
+                            name: file.name,
+                            data: e.target.result,
+                            isUserUploaded: true
+                        });
+
+                        userUploadedImages.push({
+                            name: file.name,
+                            data: e.target.result
+                        });
+
+                        // Create thumbnail in upload gallery
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.title = file.name;
+                        uploadedGallery.querySelector('.placeholder')?.remove();
+                        uploadedGallery.appendChild(img);
+
+                        // Create preview in website preview
+                        const previewImg = document.createElement('img');
+                        previewImg.src = e.target.result;
+
+                        // Remove placeholder if it exists
+                        const placeholder = previewGallery.querySelector('.placeholder');
+                        if (placeholder) {
+                            previewGallery.removeChild(placeholder);
+                        }
+
+                        previewGallery.appendChild(previewImg);
+
+                        successfulUploads++;
+
+                        if (successfulUploads === 1) {
+                            showStatus(`Successfully uploaded ${successfulUploads} image`);
+                        } else {
+                            showStatus(`Successfully uploaded ${successfulUploads} images`);
+                        }
+                    };
+
+                    reader.onerror = function() {
+                        showStatus(`Error reading ${file.name}`, true);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function showExportModal() {
+                exportModal.style.display = 'flex';
+
+                // Generate the HTML code for the website
+                const websiteCode = generateWebsiteCode();
+                codePreview.textContent = websiteCode;
+            }
+
+            function escapeHtml(value) {
+                return String(value).replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
+            }
+
+            function generateWebsiteCode() {
+                // Use only user-uploaded images for export
+                const imagesToExport = userUploadedImages.length > 0 ? userUploadedImages : uploadedImages.filter(img => img.isUserUploaded);
+
+                // Get the selected background color
+                const selectedBgColor = bgColor.value;
+                const safeTitle = escapeHtml(siteTitle.value.trim());
+                const safeDescription = escapeHtml(siteDescription.value.trim());
+
+                // Create a complete HTML document with the user's content
+                return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${safeTitle}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: ${selectedBgColor};
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .website-header {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+            border-radius: 8px;
+        }
+        .website-content {
+            padding: 20px;
+        }
+        ${currentTemplate === 'masonry' ? `
+        .photo-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .photo-layout img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        ` : ''}
+        ${currentTemplate === 'carousel' ? `
+        .photo-layout {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px 0;
+        }
+        .photo-layout img {
+            min-width: 280px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        ` : ''}
+        ${currentTemplate === 'minimal' ? `
+        .photo-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .photo-layout img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        ` : ''}
+        ${currentTemplate === 'grid' ? `
+        .photo-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .photo-layout img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        ` : ''}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="website-header">
+            <h1>${safeTitle}</h1>
+            <p>${safeDescription}</p>
+        </div>
+
+        <div class="website-content">
+            <h2>My Photos</h2>
+            <div class="photo-layout">
+                ${imagesToExport.map(img => `<img src="${img.data}" alt="${escapeHtml(img.name)}">`).join('\n                ')}
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+            }
+
+        });
+    </script>
+    <script type="module" src="./src/website-photo-builder-brand.js?v=1"></script>
+</body>
+</html>

@@ -67,6 +67,8 @@ h1 em { color: #758252; font-style: normal; }
 .game-preview.pinball-preview { height: 650px; }
 .website-maker-builder { margin-top: 28px; align-items: start; }
 .website-maker-frame { grid-column: 1 / -1; display: block; width: 100%; height: 780px; border: 5px solid #131a20; border-radius: 10px; background: #fff; }
+.website-photo-builder { margin-top: 28px; align-items: start; }
+.website-photo-frame { grid-column: 1 / -1; display: block; width: 100%; height: 780px; border: 5px solid #131a20; border-radius: 10px; background: #fff; }
 .invoice-generator-builder { margin-top: 28px; align-items: start; }
 .invoice-generator-frame { grid-column: 1 / -1; display: block; width: 100%; height: 780px; border: 5px solid #131a20; border-radius: 10px; background: #fff; }
 .game-preview.checkers-preview { height: 560px; }
