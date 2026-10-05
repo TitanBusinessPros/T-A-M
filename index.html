@@ -118,6 +118,40 @@
           <div class="qr-wrap"><div id="checkersQrTarget" role="img" aria-label="QR code for your Checkers game"></div><a id="checkersDownloadQr" class="download-link" download="checkers-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
         </section>
 
+        <section class="builder chess-builder" aria-labelledby="chess-heading">
+          <div class="builder-form">
+            <div class="step-label"><span>01</span> MAKE IT YOURS</div>
+            <h2 id="chess-heading">Chess game</h2>
+            <p class="form-copy">Add your logo and a website or social page address. Both appear above the board, and your address appears in a short commercial after the 10th move.</p>
+            <div class="credits-card"><strong>Chess game: 1 credit</strong><small>Creating your finished Chess game and QR code uses 1 credit. Your balance is shown above when signed in.</small></div>
+            <form id="chessForm">
+              <label for="chessLogo">Logo (required)</label>
+              <input id="chessLogo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="chessStatus" required />
+              <label class="logo-label" for="chessWebsite">Website or social page address</label>
+              <input id="chessWebsite" name="website" type="text" inputmode="url" maxlength="512" placeholder="example.com or facebook.com/yourpage" autocomplete="url" required />
+              <p class="logo-help" id="chessStatus" role="status" aria-live="polite">PNG, JPG, or WebP logo. Maximum 100 KB. The preview updates as you add your details.</p>
+              <button class="primary-button" id="chessCreateButton" type="submit">MAKE MY CHESS GAME <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your game. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+          </div>
+          <div class="preview-column">
+            <div class="step-label"><span>02</span> PLAYABLE PREVIEW</div>
+            <div class="game-preview chess-preview"><iframe id="chessPreview" src="./chess-game.html?preview=1" title="Playable Chess game preview"></iframe></div>
+            <p class="preview-caption">See your logo and address immediately, and play Chess to preview the game.</p>
+          </div>
+        </section>
+
+        <section class="share-card" id="chessShareCard" hidden aria-live="polite" aria-labelledby="chessShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="chessShareHeading">Your Chess game is ready</h2>
+            <p>Share the link or scan the code so people can play your branded Chess game.</p>
+            <div class="link-row"><input id="chessGameLink" type="text" readonly aria-label="Your Chess game link" /><button id="chessCopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="chessOpenGame" class="open-game-link" target="_blank" rel="noopener">OPEN GAME ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="chessQrTarget" role="img" aria-label="QR code for your Chess game"></div><a id="chessDownloadQr" class="download-link" download="chess-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
+        </section>
+
         <section class="builder qr-maker-builder" aria-labelledby="qr-maker-heading">
           <div class="builder-form">
             <div class="step-label"><span>01</span> MAKE IT YOURS</div>
@@ -187,7 +221,7 @@
 
         <section class="how-it-works" aria-label="How it works">
           <div><span>1</span><p>Choose a game or app and add your company details</p></div>
-          <div><span>2</span><p>Use 1 credit for Space, 2 for the QR tool, 3 for Website Maker, or 4 for Checkers</p></div>
+          <div><span>2</span><p>Use 1 credit for Space or Chess, 2 for the QR tool, 3 for Website Maker, or 4 for Checkers</p></div>
           <div><span>3</span><p>Share your branded game or app so people can use it</p></div>
         </section>
       </main>
@@ -212,7 +246,7 @@
     </dialog>
     <dialog id="creditPurchaseDialog" class="purchase-dialog" aria-labelledby="creditPurchaseTitle" aria-describedby="finalSaleNotice">
       <h2 id="creditPurchaseTitle">Buy 5 credits for $5</h2>
-      <p>Space games use 1 credit, the QR tool uses 2, Website Maker uses 3, and Checkers games use 4.</p>
+      <p>Space and Chess games use 1 credit, the QR tool uses 2, Website Maker uses 3, and Checkers games use 4.</p>
       <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
       <label class="purchase-consent" for="purchaseTerms">
         <input id="purchaseTerms" type="checkbox" />
@@ -226,6 +260,7 @@
     <script defer src="./src/install.js?v=12"></script>
     <script type="module" src="./src/main.js?v=10"></script>
     <script type="module" src="./src/checkers-builder.js?v=10"></script>
+    <script type="module" src="./src/chess-builder.js?v=1"></script>
     <script type="module" src="./src/qr-maker-builder.js?v=10"></script>
     <script type="module" src="./src/website-maker-builder.js?v=2"></script>
   </body>

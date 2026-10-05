@@ -19,6 +19,7 @@ const gameBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/space-game.html';
 const checkersBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/checkers-game.html';
 const qrMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/qr-maker.html';
 const websiteMakerBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/website-maker.html';
+const chessBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/chess-game.html';
 const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -158,8 +159,8 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const title = String(request.data?.title || '').trim();
   const logoPath = String(request.data?.logoPath || '');
   const gameId = String(request.data?.requestId || '');
-  const website = gameType === 'qrMaker' ? normalizeWebsite(request.data?.website) : null;
-  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker'].includes(gameType) && title)) {
+  const website = ['qrMaker', 'chess'].includes(gameType) ? normalizeWebsite(request.data?.website) : null;
+  if (!idPattern.test(gameId) || (!['checkers', 'websiteMaker', 'chess'].includes(gameType) && (!title || title.length > 48)) || (['checkers', 'websiteMaker', 'chess'].includes(gameType) && title)) {
     throw new HttpsError('invalid-argument', 'A valid game request is required.');
   }
   if (gameType === 'qrMaker' && (!website || logoPath)) {
@@ -167,6 +168,9 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   }
   if (gameType === 'websiteMaker' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for the Website Maker.');
+  }
+  if (gameType === 'chess' && (!logoPath || !website)) {
+    throw new HttpsError('invalid-argument', 'A logo and website or social page address are required for Chess.');
   }
   if (gameType === 'checkers' && !logoPath) {
     throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
@@ -200,6 +204,6 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
       gameType, title, logoPath, ...(website ? { website } : {}), createdAt: FieldValue.serverTimestamp(),
     });
   });
-  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameBaseUrl;
+  const baseUrl = gameType === 'checkers' ? checkersBaseUrl : gameType === 'qrMaker' ? qrMakerBaseUrl : gameType === 'websiteMaker' ? websiteMakerBaseUrl : gameType === 'chess' ? chessBaseUrl : gameBaseUrl;
   return { gameId, gameUrl: `${baseUrl}?game=${gameId}` };
 });

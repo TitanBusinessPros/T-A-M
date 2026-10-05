@@ -3,6 +3,7 @@ function gameCost(gameType) {
   if (gameType === 'checkers') return 4;
   if (gameType === 'qrMaker') return 2;
   if (gameType === 'websiteMaker') return 3;
+  if (gameType === 'chess') return 1;
   return null;
 }
 
