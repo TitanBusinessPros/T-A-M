@@ -1,4 +1,4 @@
-import { currentUser, getCreditStatus } from './firebase.js?v=6';
+import { currentUser, getCreditStatus } from './firebase.js?v=8';
 
 export function setupCreditBalance({ onStatus, onError }) {
   const summary = document.querySelector('#accountSummary');
@@ -56,6 +56,7 @@ export function setupCreditBalance({ onStatus, onError }) {
 
   refreshButton.addEventListener('click', refresh);
   window.addEventListener('focus', refresh);
+  window.addEventListener('credits-changed', refresh);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') refresh();
   });

@@ -1,5 +1,5 @@
-import { currentUser, grantCredits, signIn, signOutUser, watchUser } from './firebase.js?v=6';
-import { setupCreditBalance } from './credit-balance.js?v=6';
+import { currentUser, grantCredits, signIn, signOutUser, watchUser } from './firebase.js?v=8';
+import { setupCreditBalance } from './credit-balance.js?v=8';
 
 const authButton = document.querySelector('#authButton');
 const accessStatus = document.querySelector('#accessStatus');

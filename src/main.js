@@ -1,5 +1,5 @@
-import { createGame, currentUser, getCreditStatus, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js?v=6';
-import { setupCreditBalance } from './credit-balance.js?v=6';
+import { createGame, currentUser, getCreditStatus, signIn, signOutUser, trackQrCreated, uploadLogo, validateLogo, watchUser } from './firebase.js?v=8';
+import { setupCreditBalance } from './credit-balance.js?v=8';
 
 const form = document.querySelector('#brandForm');
 const nameInput = document.querySelector('#businessName');

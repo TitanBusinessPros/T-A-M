@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
     <link rel="manifest" href="./manifest.webmanifest?v=3" />
     <meta name="description" content="Promote your business with a custom game and QR code from Titan App Maker." />
-    <title>Titan App Maker | Space Game</title>
-    <link rel="stylesheet" href="./src/style.css?v=7" />
+    <title>Titan App Maker | Games</title>
+    <link rel="stylesheet" href="./src/style.css?v=8" />
   </head>
   <body>
     <div class="page-shell">
@@ -43,7 +43,7 @@
             <div class="credits-card">
               <strong>Space game: 1 credit</strong>
               <span id="creditBalance">Sign in to see your credits.</span>
-              <small>$5 buys 5 credits. Each finished game and QR code uses 1 credit.</small>
+              <small>$5 buys 5 credits. Each finished Space game and QR code uses 1 credit.</small>
               <p id="finalSaleNotice" class="final-sale-notice">All credit purchases are final. Unused credits are not refunded, except where required by law.</p>
               <label class="purchase-consent" for="purchaseTerms">
                 <input id="purchaseTerms" type="checkbox" />
@@ -91,14 +91,46 @@
           </div>
         </section>
 
+        <section class="builder checkers-builder" aria-labelledby="checkers-heading">
+          <div class="builder-form">
+            <div class="step-label"><span>01</span> MAKE IT YOURS</div>
+            <h2 id="checkers-heading">Checkers game</h2>
+            <p class="form-copy">Add only your logo. It appears under “Sponsored by” beside the board while people play.</p>
+            <div class="credits-card"><strong>Checkers game: 4 credits</strong><small>Creating a finished Checkers game and QR code uses 4 credits. Your current balance is shown above when signed in.</small></div>
+            <form id="checkersForm">
+              <label for="checkersLogo">Sponsor logo (required)</label>
+              <input id="checkersLogo" name="checkersLogo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="checkersLogoHelp" required />
+              <p class="logo-help" id="checkersLogoHelp" role="status">PNG, JPG, or WebP. Maximum 100 KB. Your preview updates when you choose a logo.</p>
+              <button class="primary-button" id="checkersCreateButton" type="submit">MAKE MY CHECKERS GAME <span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="fine-print">Sign in with Google to make your game. By using Titan App Maker, you agree to our <a href="./terms.html">Terms</a> and acknowledge our <a href="./privacy.html">Privacy Policy</a>.</div>
+          </div>
+          <div class="preview-column">
+            <div class="step-label"><span>02</span> PLAYABLE PREVIEW</div>
+            <div class="game-preview checkers-preview"><iframe id="checkersPreview" src="./checkers-game.html?preview=1" title="Playable Checkers game preview"></iframe></div>
+            <p class="preview-caption">Choose a logo to see it here immediately. Play Checkers in the preview before creating your game.</p>
+          </div>
+        </section>
+
+        <section class="share-card" id="checkersShareCard" hidden aria-live="polite" aria-labelledby="checkersShareHeading">
+          <div class="share-copy">
+            <div class="step-label"><span>03</span> SHARE IT</div>
+            <h2 id="checkersShareHeading">Your Checkers game is ready</h2>
+            <p>Scan the code to open your game, or copy the link to share it.</p>
+            <div class="link-row"><input id="checkersGameLink" type="text" readonly aria-label="Your Checkers game link" /><button id="checkersCopyLink" type="button" class="secondary-button">COPY LINK</button></div>
+            <a id="checkersOpenGame" class="open-game-link" target="_blank" rel="noopener">OPEN GAME ↗</a>
+          </div>
+          <div class="qr-wrap"><div id="checkersQrTarget" role="img" aria-label="QR code for your Checkers game"></div><a id="checkersDownloadQr" class="download-link" download="checkers-game-qr.png">DOWNLOAD QR CODE ↓</a></div>
+        </section>
+
         <section class="how-it-works" aria-label="How it works">
-          <div><span>1</span><p>Enter your business name and logo</p></div>
-          <div><span>2</span><p>Use 1 credit to get a game link and QR code</p></div>
+          <div><span>1</span><p>Choose a game and add its name or logo</p></div>
+          <div><span>2</span><p>Use 1 credit for Space or 4 credits for Checkers to get a game link and QR code</p></div>
           <div><span>3</span><p>Share it so people can play</p></div>
         </section>
       </main>
 
-      <footer class="footer"><span>Titan App Maker</span><nav class="footer-links" aria-label="Legal"><a href="./terms.html">Terms</a><a href="./privacy.html">Privacy Policy</a></nav><span>SPACE GAME</span></footer>
+      <footer class="footer"><span>Titan App Maker</span><nav class="footer-links" aria-label="Legal"><a href="./terms.html">Terms</a><a href="./privacy.html">Privacy Policy</a></nav><span>SPACE GAME · CHECKERS GAME</span></footer>
     </div>
     <dialog id="noLogoWarning" aria-labelledby="noLogoWarningTitle">
       <h2 id="noLogoWarningTitle">No logo added</h2>
@@ -112,6 +144,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script defer src="./src/install.js?v=7"></script>
-    <script type="module" src="./src/main.js?v=7"></script>
+    <script type="module" src="./src/main.js?v=8"></script>
+    <script type="module" src="./src/checkers-builder.js?v=8"></script>
   </body>
 </html>

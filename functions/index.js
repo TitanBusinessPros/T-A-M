@@ -7,6 +7,7 @@ const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const Stripe = require('stripe');
 const { creditsForSession } = require('./credits');
 const { emailKey, grantAmount, isAdmin, normalizeEmail } = require('./admin-credits');
+const { gameCost } = require('./game-pricing');
 
 initializeApp();
 const db = getFirestore();
@@ -14,6 +15,7 @@ const stripe = new Stripe('sk_test_signature_verification_only');
 const webhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 const region = 'us-central1';
 const gameBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/space-game.html';
+const checkersBaseUrl = 'https://titanbusinesspros.github.io/T-A-M/checkers-game.html';
 const paymentLinkUrl = 'https://buy.stripe.com/7sYfZie3T9EAdqaefJ7AI12';
 const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -145,11 +147,19 @@ exports.grantCredits = onCall({ region, maxInstances: 3 }, async (request) => {
 
 exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const uid = googleUser(request);
+  const gameType = request.data?.gameType || 'space';
+  const cost = gameCost(gameType);
+  if (!cost) {
+    throw new HttpsError('invalid-argument', 'Choose a valid game.');
+  }
   const title = String(request.data?.title || '').trim();
   const logoPath = String(request.data?.logoPath || '');
   const gameId = String(request.data?.requestId || '');
-  if (!title || title.length > 48 || !idPattern.test(gameId)) {
-    throw new HttpsError('invalid-argument', 'A valid business name and request are required.');
+  if (!idPattern.test(gameId) || (gameType === 'space' && (!title || title.length > 48)) || (gameType === 'checkers' && title)) {
+    throw new HttpsError('invalid-argument', 'A valid game request is required.');
+  }
+  if (gameType === 'checkers' && !logoPath) {
+    throw new HttpsError('invalid-argument', 'A logo is required for Checkers.');
   }
   if (logoPath && !new RegExp(`^logos/${uid}/[0-9a-f-]{36}$`).test(logoPath)) {
     throw new HttpsError('invalid-argument', 'This logo does not belong to your account.');
@@ -161,19 +171,22 @@ exports.createGame = onCall({ region, maxInstances: 3 }, async (request) => {
   const redemptionRef = db.doc(`creditRedemptions/${gameId}`);
   const gameRef = db.doc(`games/${gameId}`);
   await db.runTransaction(async (transaction) => {
-    const [redemption, account] = await Promise.all([
-      transaction.get(redemptionRef), transaction.get(accountRef),
+    const [redemption, account, existingGame] = await Promise.all([
+      transaction.get(redemptionRef), transaction.get(accountRef), transaction.get(gameRef),
     ]);
     if (redemption.exists) {
       if (redemption.data().uid !== uid) throw new HttpsError('already-exists', 'This request was already used.');
+      if ((redemption.data().gameType || 'space') !== gameType || !existingGame.exists) {
+        throw new HttpsError('already-exists', 'This request was already used for a different game.');
+      }
       return;
     }
-    if ((account.data()?.credits || 0) < 1) throw new HttpsError('failed-precondition', 'You need one credit to make this game.');
+    if ((account.data()?.credits || 0) < cost) throw new HttpsError('failed-precondition', `You need ${cost} credits to make this game.`);
     transaction.set(accountRef, {
-      credits: FieldValue.increment(-1), updatedAt: FieldValue.serverTimestamp(),
+      credits: FieldValue.increment(-cost), updatedAt: FieldValue.serverTimestamp(),
     }, { merge: true });
-    transaction.create(redemptionRef, { uid, gameId, cost: 1, createdAt: FieldValue.serverTimestamp() });
-    transaction.create(gameRef, { title, logoPath, createdAt: FieldValue.serverTimestamp() });
+    transaction.create(redemptionRef, { uid, gameId, gameType, cost, createdAt: FieldValue.serverTimestamp() });
+    transaction.create(gameRef, { gameType, title, logoPath, createdAt: FieldValue.serverTimestamp() });
   });
-  return { gameId, gameUrl: `${gameBaseUrl}?game=${gameId}` };
+  return { gameId, gameUrl: `${gameType === 'checkers' ? checkersBaseUrl : gameBaseUrl}?game=${gameId}` };
 });

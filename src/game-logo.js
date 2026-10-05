@@ -1,4 +1,4 @@
-import { firebaseApp, getLogoURL } from './firebase.js';
+import { firebaseApp, getLogoURL } from './firebase.js?v=8';
 
 const params = new URLSearchParams(window.location.search);
 let logoPath = params.get('logo');
@@ -8,7 +8,7 @@ if (gameId) {
     if (!/^[0-9a-f-]{36}$/.test(gameId)) throw new Error('Invalid game link.');
     const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js');
     const game = await getDoc(doc(getFirestore(firebaseApp), 'games', gameId));
-    if (!game.exists()) throw new Error('This game could not be found.');
+    if (!game.exists() || (game.data().gameType && game.data().gameType !== 'space')) throw new Error('This game could not be found.');
     const title = game.data().title;
     document.querySelector('#gameTitle').textContent = title;
     document.querySelector('#gameTitle').classList.remove('placeholder');
