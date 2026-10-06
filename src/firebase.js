@@ -29,13 +29,13 @@ export async function grantCredits(email, credits, requestId) {
 export async function createGame(title, logoPath, requestId, gameType = 'space', website = '') {
   return (await httpsCallable(functions, 'createGame')({ title, logoPath, requestId, gameType, website })).data;
 }
-export const MAX_LOGO_BYTES = 500 * 1024;
+export const MAX_LOGO_BYTES = 1024 * 1024;
 const allowedLogoTypes = new Set(['image/png', 'image/jpeg', 'image/webp']);
 
 export function validateLogo(file) {
   if (!allowedLogoTypes.has(file.type)) throw new Error('Choose a PNG, JPG, or WebP logo.');
   if (file.size === 0) throw new Error('This logo file is empty.');
-  if (file.size > MAX_LOGO_BYTES) throw new Error('Logo must be 500 KB or smaller.');
+  if (file.size > MAX_LOGO_BYTES) throw new Error('Logo must be 1 MB or smaller.');
 }
 
 export async function uploadLogo(file) {
