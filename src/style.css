@@ -62,6 +62,7 @@ h1 em { color: #758252; font-style: normal; }
 .learn-money-button:hover, .learn-money-button:focus-visible { background: #354b34; }
 .weekly-tools-note { margin: 20px 0 0; color: var(--ink); font-size: 32px; line-height: 1.2; }
 .weekly-tools-note strong { font-weight: 800; }
+.upload-size-note { max-width: 650px; margin: 12px auto 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
 .learn-money-panel { max-width: 760px; margin: 24px auto 0; padding: 24px 28px; border: 1px solid #cbdba8; border-radius: 16px; background: #fff; text-align: left; box-shadow: 0 12px 32px rgba(38, 48, 37, .06); }
 .learn-money-panel[hidden] { display: none; }
 .learn-money-panel h2 { margin: 0 0 10px; font-size: 23px; text-align: center; }
