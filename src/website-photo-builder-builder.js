@@ -15,7 +15,7 @@ let requestId;
 function validateLogo(file) {
   if (!file || !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) throw new Error('Choose a PNG, JPG, or WebP logo.');
   if (file.size === 0) throw new Error('This logo file is empty.');
-  if (file.size > 100 * 1024) throw new Error('Logo must be 100 KB or smaller.');
+  if (file.size > 500 * 1024) throw new Error('Logo must be 500 KB or smaller.');
 }
 
 function normalizeWebsite(value) {

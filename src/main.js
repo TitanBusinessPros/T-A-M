@@ -130,7 +130,7 @@ logoInput.addEventListener('change', () => {
   shareCard.hidden = true;
   pendingRequestId = undefined;
   logoHelp.classList.remove('error');
-  logoHelp.textContent = 'PNG, JPG, or WebP. Maximum 100 KB.';
+  logoHelp.textContent = 'PNG, JPG, or WebP. Maximum 500 KB.';
   if (previewLogoUrl) URL.revokeObjectURL(previewLogoUrl);
   previewLogoUrl = null;
   const file = logoInput.files[0];
@@ -140,7 +140,7 @@ logoInput.addEventListener('change', () => {
     validateLogo(file);
     previewLogoUrl = URL.createObjectURL(file);
     updateLogoPreview();
-    logoHelp.textContent = 'Logo ready. Maximum 100 KB.';
+    logoHelp.textContent = 'Logo ready. Maximum 500 KB.';
   } catch (error) {
     logoInput.value = '';
     logoHelp.textContent = error.message;
